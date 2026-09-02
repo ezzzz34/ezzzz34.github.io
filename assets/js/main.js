@@ -49,7 +49,8 @@
   /* ---------- 1) data-bind 로 텍스트/속성 채우기 ---------- */
   $$("[data-bind]").forEach(function (node) {
     var v = get(node.getAttribute("data-bind"));
-    if (v != null) node.textContent = v;
+    if (v == null || v === "") { node.hidden = true; return; }   // 빈 값이면 숨김
+    node.textContent = v;
   });
   $$("[data-bind-src]").forEach(function (node) {
     var v = get(node.getAttribute("data-bind-src"));
@@ -100,7 +101,7 @@
 
     var tbody = el("tbody");
     var tr = el("tr");
-    for (var i = 0; i < first; i++) tr.appendChild(el("td", "is-empty", " "));
+    for (var i = 0; i < first; i++) tr.appendChild(el("td", "is-empty", " "));
     for (var d = 1; d <= last; d++) {
       if ((first + d - 1) % 7 === 0 && d !== 1) { tbody.appendChild(tr); tr = el("tr"); }
       var td = el("td");
@@ -112,7 +113,7 @@
       }
       tr.appendChild(td);
     }
-    while (tr.children.length < 7) tr.appendChild(el("td", "is-empty", " "));
+    while (tr.children.length < 7) tr.appendChild(el("td", "is-empty", " "));
     tbody.appendChild(tr);
     table.appendChild(tbody);
     calSlot.appendChild(table);
@@ -266,7 +267,30 @@
     shareSlot.appendChild(b);
   }
 
-  /* ---------- 8) 스크롤 등장 애니메이션 ---------- */
+  /* ---------- 8) 배경음악 (config 의 options.bgm 에 파일 경로가 있을 때만) ---------- */
+  var musicBtn = $('[data-slot="music"]');
+  if (musicBtn) {
+    if (!C.options.bgm) {
+      musicBtn.remove();
+    } else {
+      var audio = new Audio(C.options.bgm);
+      audio.loop = true;
+      musicBtn.addEventListener("click", function () {
+        if (audio.paused) {
+          audio.play().then(function () {
+            musicBtn.classList.add("is-playing");
+          }, function () {
+            showToast("브라우저가 음악 재생을 막았습니다");
+          });
+        } else {
+          audio.pause();
+          musicBtn.classList.remove("is-playing");
+        }
+      });
+    }
+  }
+
+  /* ---------- 9) 스크롤 등장 애니메이션 ---------- */
   var targets = $$(".reveal");
   if ("IntersectionObserver" in window) {
     var io = new IntersectionObserver(function (entries) {
@@ -282,6 +306,6 @@
     targets.forEach(function (t) { t.classList.add("is-visible"); });
   }
 
-  /* ---------- 9) 문서 제목 자동 반영 ---------- */
+  /* ---------- 10) 문서 제목 자동 반영 ---------- */
   document.title = C.couple.groom.name + " ♥ " + C.couple.bride.name + " 결혼합니다";
 })();
