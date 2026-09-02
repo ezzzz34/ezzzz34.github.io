@@ -213,11 +213,18 @@ a { color: inherit; text-decoration: none; }
 .parents__dot { margin: 0 4px; }
 /* 고인 표시 국화 */
 .chrysanthemum {
-  width: 12px; height: 12px;
+  /* iOS 사파리는 SVG 기본 크기를 100% 로 잡아 크게 나오므로 값을 못 박습니다 */
+  width: 12px !important;
+  height: 12px !important;
+  min-width: 12px;
+  max-width: 12px;
+  max-height: 12px;
+  flex: none;
   display: inline-block;
-  vertical-align: -1px;
-  margin-right: 3px;
+  vertical-align: middle;
+  margin: 0 3px 2px 0;
   color: var(--color-muted);
+  overflow: visible;
 }
 .parents__rel { font-size: 13px; }
 
@@ -229,7 +236,13 @@ a { color: inherit; text-decoration: none; }
   background: var(--color-point-bg);
   border-radius: var(--radius);
 }
-.calendar table { width: 100%; border-collapse: collapse; }
+.calendar table {
+  width: 100%;
+  table-layout: fixed;          /* 7칸을 정확히 같은 너비로 */
+  border-collapse: collapse;
+}
+.calendar th,
+.calendar td { width: 14.2857%; text-align: center; }
 .calendar th {
   font-size: 12px;
   font-weight: 400;
