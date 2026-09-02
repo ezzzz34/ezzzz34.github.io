@@ -54,7 +54,9 @@
                 'stroke="currentColor" stroke-width=".8" ' +
                 'transform="rotate(' + (i * 30) + ' 12 12)"/>';
     }
-    return '<svg class="chrysanthemum" viewBox="0 0 24 24" aria-hidden="true">' +
+    // width/height 속성을 함께 주어야 iOS 사파리에서 크기가 커지지 않습니다
+    return '<svg class="chrysanthemum" width="12" height="12" viewBox="0 0 24 24" ' +
+           'preserveAspectRatio="xMidYMid meet" aria-hidden="true">' +
            petals + '<circle cx="12" cy="12" r="2.6" fill="currentColor"/></svg>';
   }
 
