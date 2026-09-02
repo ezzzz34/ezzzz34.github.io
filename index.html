@@ -13,7 +13,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@300;400;500&family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Jost:wght@300;400;500&family=Noto+Sans+KR:wght@300;400;500&family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
@@ -25,19 +25,58 @@
        ===================================================================== -->
   <main class="paper">
 
-    <!-- ① 커버 -->
+    <!-- ① 커버 : 편지 봉투에서 사진이 나오는 화면 -->
     <section class="cover" id="cover">
-      <p class="cover__label" data-bind="cover.label"></p>
-      <div class="cover__photo">
-        <img data-bind-src="cover.image" alt="메인 사진" />
-      </div>
-      <h1 class="cover__names">
-        <span data-bind="couple.groom.name"></span>
-        <span class="cover__amp">&amp;</span>
-        <span data-bind="couple.bride.name"></span>
+      <button class="music-btn" type="button" data-slot="music" aria-label="배경음악 켜기/끄기">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+          <path d="M9 18V5l10-2v13" fill="none" stroke="currentColor" stroke-width="1.6"
+                stroke-linecap="round" stroke-linejoin="round" />
+          <circle cx="6.5" cy="18" r="2.6" fill="currentColor" />
+          <circle cx="16.5" cy="16" r="2.6" fill="currentColor" />
+        </svg>
+      </button>
+
+      <h1 class="cover__title">
+        <span data-bind="cover.titleTop"></span>
+        <span>
+          <span data-bind="couple.groom.nameEn"></span>
+          <span class="cover__amp">&amp;</span>
+          <span data-bind="couple.bride.nameEn"></span>
+        </span>
       </h1>
+
+      <!-- 봉투 : 사진(뒤) + 봉투 앞면 SVG(앞) 순서로 겹칩니다 -->
+      <div class="envelope">
+        <div class="envelope__photo">
+          <img data-bind-src="cover.image" alt="메인 사진" />
+        </div>
+        <svg class="envelope__front" viewBox="0 0 688 418" aria-hidden="true" focusable="false">
+          <defs>
+            <clipPath id="envClip">
+              <path d="M0,10 Q0,0 10,0 L344,202 L678,0 Q688,0 688,10 L688,408
+                       Q688,418 678,418 L10,418 Q0,418 0,408 Z" />
+            </clipPath>
+          </defs>
+          <!-- 봉투 앞면 (가운데가 V자로 파여 사진이 그 사이로 올라옵니다) -->
+          <path class="envelope__paper"
+                d="M0,10 Q0,0 10,0 L344,202 L678,0 Q688,0 688,10 L688,408
+                   Q688,418 678,418 L10,418 Q0,418 0,408 Z" />
+          <!-- 접힌 자국 (봉투 밖으로 삐져나가지 않도록 잘라냅니다) -->
+          <g clip-path="url(#envClip)">
+            <path class="envelope__fold" d="M344,121 L0,382 M344,121 L688,382" />
+          </g>
+        </svg>
+      </div>
+
       <p class="cover__subtitle" data-bind="cover.subtitle"></p>
-      <div class="scroll-hint" aria-hidden="true"><span></span></div>
+
+      <a class="cover__more" href="#greeting">
+        <span data-bind="cover.moreLabel"></span>
+        <svg viewBox="0 0 24 14" width="30" height="18" aria-hidden="true">
+          <path d="M2 2 L12 11 L22 2" fill="none" stroke="currentColor" stroke-width="2.4"
+                stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </a>
     </section>
 
     <!-- ② 인사말 -->
