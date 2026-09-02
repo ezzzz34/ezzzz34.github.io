@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>모바일 청첩장</title>
+
+  <!-- 카카오톡/문자 공유 시 보이는 미리보기 (나중에 실제 값으로 교체) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="김철수 ♥ 박영희 결혼합니다" />
+  <meta property="og:description" content="2026년 11월 7일 토요일 오후 1시, ○○웨딩홀" />
+  <meta property="og:image" content="assets/img/main.jpg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@300;400;500&family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+
+<body>
+  <!-- =====================================================================
+       페이지는 config.js 의 내용으로 자동으로 채워집니다.
+       구조(순서·섹션 추가/삭제)를 바꾸고 싶을 때만 이 파일을 수정하세요.
+       ===================================================================== -->
+  <main class="paper">
+
+    <!-- ① 커버 -->
+    <section class="cover" id="cover">
+      <p class="cover__label" data-bind="cover.label"></p>
+      <div class="cover__photo">
+        <img data-bind-src="cover.image" alt="메인 사진" />
+      </div>
+      <h1 class="cover__names">
+        <span data-bind="couple.groom.name"></span>
+        <span class="cover__amp">&amp;</span>
+        <span data-bind="couple.bride.name"></span>
+      </h1>
+      <p class="cover__subtitle" data-bind="cover.subtitle"></p>
+      <div class="scroll-hint" aria-hidden="true"><span></span></div>
+    </section>
+
+    <!-- ② 인사말 -->
+    <section class="section reveal" id="greeting">
+      <p class="section__eyebrow">INVITATION</p>
+      <h2 class="section__title" data-bind="greeting.title"></h2>
+      <p class="greeting__poem" data-bind="greeting.poem"></p>
+      <div class="divider" aria-hidden="true"></div>
+      <p class="greeting__body" data-bind="greeting.body"></p>
+
+      <!-- 혼주 / 신랑신부 -->
+      <div class="parents">
+        <p class="parents__line">
+          <span data-bind="couple.groom.father.name"></span>
+          <span class="parents__dot">·</span>
+          <span data-bind="couple.groom.mother.name"></span>
+          <span class="parents__rel">의 <span data-bind="couple.groom.relation"></span></span>
+          <strong data-bind="couple.groom.name"></strong>
+        </p>
+        <p class="parents__line">
+          <span data-bind="couple.bride.father.name"></span>
+          <span class="parents__dot">·</span>
+          <span data-bind="couple.bride.mother.name"></span>
+          <span class="parents__rel">의 <span data-bind="couple.bride.relation"></span></span>
+          <strong data-bind="couple.bride.name"></strong>
+        </p>
+      </div>
+    </section>
+
+    <!-- ③ 예식 일시 -->
+    <section class="section reveal" id="calendar">
+      <p class="section__eyebrow">WEDDING DAY</p>
+      <h2 class="section__title" data-slot="wedding-date"></h2>
+      <p class="section__lead" data-slot="wedding-time"></p>
+      <div class="calendar" data-slot="calendar"></div>
+      <p class="dday" data-slot="dday"></p>
+    </section>
+
+    <!-- ④ 장소 -->
+    <section class="section reveal" id="location">
+      <p class="section__eyebrow">LOCATION</p>
+      <h2 class="section__title" data-bind="wedding.venue.name"></h2>
+      <p class="section__lead" data-bind="wedding.venue.hall"></p>
+      <p class="venue__address" data-bind="wedding.venue.address"></p>
+      <div class="btn-row">
+        <button class="btn" type="button" data-action="copy-address">주소 복사</button>
+        <a class="btn" data-bind-href="tel:wedding.venue.tel">웨딩홀 전화</a>
+      </div>
+      <!-- 지도는 다음 단계에서 이 자리에 삽입 -->
+      <div class="map-placeholder">지도는 이후 단계에서 추가 예정입니다</div>
+    </section>
+
+    <!-- ⑤ 갤러리 -->
+    <section class="section reveal" id="gallery">
+      <p class="section__eyebrow" data-bind="gallery.title"></p>
+      <h2 class="section__title">우리의 순간</h2>
+      <div class="gallery-grid" data-slot="gallery"></div>
+    </section>
+
+    <!-- ⑥ 연락처 -->
+    <section class="section reveal" id="contact">
+      <p class="section__eyebrow">CONTACT</p>
+      <h2 class="section__title" data-bind="contact.title"></h2>
+      <p class="section__lead" data-bind="contact.description"></p>
+      <div class="contact-list" data-slot="contact"></div>
+    </section>
+
+    <!-- ⑦ 푸터 -->
+    <footer class="footer reveal">
+      <div class="btn-row" data-slot="share"></div>
+      <p class="footer__text" data-bind="options.footerText"></p>
+    </footer>
+  </main>
+
+  <!-- 갤러리 라이트박스 -->
+  <div class="lightbox" data-slot="lightbox" hidden>
+    <button class="lightbox__close" type="button" aria-label="닫기">&times;</button>
+    <button class="lightbox__nav lightbox__nav--prev" type="button" aria-label="이전">&#8249;</button>
+    <img class="lightbox__img" src="" alt="" />
+    <button class="lightbox__nav lightbox__nav--next" type="button" aria-label="다음">&#8250;</button>
+    <p class="lightbox__count"></p>
+  </div>
+
+  <!-- 토스트 -->
+  <div class="toast" data-slot="toast" hidden></div>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
