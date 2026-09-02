@@ -1,0 +1,352 @@
+/* =========================================================================
+ *  디자인 변수 — 색상 / 폰트 / 간격은 여기만 바꾸면 전체에 반영됩니다.
+ * ========================================================================= */
+:root {
+  --color-bg:        #f7f4ef;   /* 바깥 배경 */
+  --color-paper:     #fffdfa;   /* 청첩장 종이 배경 */
+  --color-text:      #3c3733;   /* 기본 글자색 */
+  --color-muted:     #8b8179;   /* 흐린 글자색 */
+  --color-line:      #e3ddd4;   /* 구분선 */
+  --color-point:     #b08d6a;   /* 포인트(강조) 색 */
+  --color-point-bg:  #f1e9df;   /* 포인트 배경 */
+
+  --font-serif:  "Gowun Batang", serif;
+  --font-sans:   "Noto Sans KR", sans-serif;
+  --font-latin:  "Cormorant Garamond", serif;
+
+  --paper-width: 430px;         /* 청첩장 최대 폭 */
+  --radius: 4px;
+}
+
+/* ========================= 기본 리셋 ========================= */
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  line-height: 1.9;
+  -webkit-font-smoothing: antialiased;
+  word-break: keep-all;
+}
+img { display: block; max-width: 100%; }
+button { font: inherit; cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+
+/* 청첩장 종이 */
+.paper {
+  max-width: var(--paper-width);
+  margin: 0 auto;
+  background: var(--color-paper);
+  min-height: 100vh;
+  box-shadow: 0 0 40px rgba(0, 0, 0, .06);
+  overflow: hidden;
+}
+
+/* ========================= 공통 섹션 ========================= */
+.section {
+  padding: 72px 28px;
+  text-align: center;
+  border-top: 1px solid var(--color-line);
+}
+.section__eyebrow {
+  font-family: var(--font-latin);
+  font-size: 13px;
+  letter-spacing: .28em;
+  color: var(--color-point);
+  margin: 0 0 14px;
+  text-transform: uppercase;
+}
+.section__title {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: .04em;
+  margin: 0 0 18px;
+}
+.section__lead {
+  font-size: 14px;
+  color: var(--color-muted);
+  margin: 0 0 24px;
+}
+.divider {
+  width: 1px;
+  height: 44px;
+  margin: 28px auto;
+  background: linear-gradient(to bottom, transparent, var(--color-line), transparent);
+}
+
+/* ========================= ① 커버 ========================= */
+.cover {
+  padding: 56px 28px 40px;
+  text-align: center;
+}
+.cover__label {
+  font-family: var(--font-latin);
+  font-size: 12px;
+  letter-spacing: .32em;
+  color: var(--color-muted);
+  margin: 0 0 28px;
+}
+.cover__photo {
+  border-radius: 200px 200px 0 0;  /* 아치형 사진 */
+  overflow: hidden;
+  aspect-ratio: 3 / 4;
+  background: var(--color-point-bg);
+}
+.cover__photo img { width: 100%; height: 100%; object-fit: cover; }
+.cover__names {
+  font-family: var(--font-serif);
+  font-size: 26px;
+  font-weight: 400;
+  letter-spacing: .08em;
+  margin: 32px 0 14px;
+}
+.cover__amp {
+  font-family: var(--font-latin);
+  color: var(--color-point);
+  margin: 0 10px;
+}
+.cover__subtitle {
+  font-size: 14px;
+  color: var(--color-muted);
+  margin: 0;
+  white-space: pre-line;
+}
+.scroll-hint {
+  width: 1px; height: 46px;
+  margin: 34px auto 0;
+  background: var(--color-line);
+  position: relative; overflow: hidden;
+}
+.scroll-hint span {
+  position: absolute; inset: 0;
+  background: var(--color-point);
+  animation: scrollDown 1.8s ease-in-out infinite;
+}
+@keyframes scrollDown {
+  0%   { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+/* ========================= ② 인사말 ========================= */
+.greeting__poem {
+  font-family: var(--font-serif);
+  font-size: 15px;
+  color: var(--color-point);
+  white-space: pre-line;
+  margin: 0;
+}
+.greeting__body {
+  font-size: 15px;
+  white-space: pre-line;
+  margin: 0 0 40px;
+}
+.parents__line {
+  font-size: 14px;
+  margin: 6px 0;
+  color: var(--color-muted);
+}
+.parents__line strong {
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--color-text);
+  margin-left: 6px;
+}
+.parents__dot { margin: 0 4px; }
+.parents__rel { font-size: 13px; }
+
+/* ========================= ③ 달력 / D-day ========================= */
+.calendar {
+  max-width: 300px;
+  margin: 0 auto;
+  padding: 22px 14px;
+  background: var(--color-point-bg);
+  border-radius: var(--radius);
+}
+.calendar table { width: 100%; border-collapse: collapse; }
+.calendar th {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--color-muted);
+  padding-bottom: 10px;
+}
+.calendar th:first-child { color: #c96a5f; }
+.calendar td {
+  font-size: 13px;
+  padding: 7px 0;
+  color: var(--color-text);
+}
+.calendar td:first-child { color: #c96a5f; }
+.calendar td.is-empty { color: transparent; }
+.calendar td.is-wedding span {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--color-point);
+  color: #fff;
+}
+.dday {
+  margin: 24px 0 0;
+  font-size: 14px;
+  color: var(--color-muted);
+}
+.dday strong { color: var(--color-point); font-weight: 500; }
+
+/* ========================= ④ 장소 ========================= */
+.venue__address {
+  font-size: 14px;
+  color: var(--color-muted);
+  margin: 0 0 20px;
+}
+.map-placeholder {
+  margin-top: 24px;
+  padding: 40px 16px;
+  border: 1px dashed var(--color-line);
+  border-radius: var(--radius);
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+/* ========================= 버튼 ========================= */
+.btn-row {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius);
+  background: transparent;
+  font-size: 13px;
+  color: var(--color-text);
+  transition: background .2s, border-color .2s;
+}
+.btn:hover { background: var(--color-point-bg); border-color: var(--color-point); }
+
+/* ========================= ⑤ 갤러리 ========================= */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+}
+.gallery-grid button {
+  padding: 0; border: 0; background: none;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+}
+.gallery-grid img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform .4s ease;
+}
+.gallery-grid button:hover img { transform: scale(1.06); }
+
+/* 라이트박스 */
+.lightbox {
+  position: fixed; inset: 0;
+  background: rgba(20, 18, 16, .94);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 100;
+}
+.lightbox[hidden] { display: none; }
+.lightbox__img { max-width: 90vw; max-height: 80vh; object-fit: contain; }
+.lightbox__close {
+  position: absolute; top: 16px; right: 20px;
+  background: none; border: 0; color: #fff;
+  font-size: 32px; line-height: 1;
+}
+.lightbox__nav {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  background: none; border: 0; color: #fff;
+  font-size: 44px; line-height: 1; padding: 0 16px;
+}
+.lightbox__nav--prev { left: 0; }
+.lightbox__nav--next { right: 0; }
+.lightbox__count {
+  position: absolute; bottom: 28px;
+  width: 100%; text-align: center;
+  color: #fff; font-size: 13px; margin: 0;
+}
+
+/* ========================= ⑥ 연락처 ========================= */
+.contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  text-align: left;
+}
+.contact-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius);
+}
+.contact-row__label {
+  font-size: 12px;
+  color: var(--color-muted);
+  min-width: 74px;
+}
+.contact-row__name {
+  font-family: var(--font-serif);
+  font-size: 15px;
+  flex: 1;
+}
+.contact-row__actions { display: flex; gap: 6px; }
+.icon-btn {
+  width: 34px; height: 34px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid var(--color-line);
+  border-radius: 50%;
+  background: transparent;
+  font-size: 15px;
+  transition: background .2s;
+}
+.icon-btn:hover { background: var(--color-point-bg); }
+
+/* ========================= ⑦ 푸터 ========================= */
+.footer {
+  padding: 48px 28px 60px;
+  text-align: center;
+  border-top: 1px solid var(--color-line);
+}
+.footer__text {
+  margin: 24px 0 0;
+  font-size: 11px;
+  letter-spacing: .04em;
+  color: var(--color-muted);
+}
+
+/* ========================= 등장 애니메이션 ========================= */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity .9s ease, transform .9s ease;
+}
+.reveal.is-visible { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .reveal { opacity: 1; transform: none; transition: none; }
+  .scroll-hint span { animation: none; }
+}
+
+/* ========================= 토스트 ========================= */
+.toast {
+  position: fixed;
+  left: 50%; bottom: 40px;
+  transform: translateX(-50%);
+  background: rgba(40, 36, 32, .92);
+  color: #fff;
+  font-size: 13px;
+  padding: 10px 18px;
+  border-radius: 100px;
+  z-index: 200;
+}
+.toast[hidden] { display: none; }
