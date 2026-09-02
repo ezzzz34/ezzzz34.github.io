@@ -100,7 +100,7 @@
 
     var tbody = el("tbody");
     var tr = el("tr");
-    for (var i = 0; i < first; i++) tr.appendChild(el("td", "is-empty", "."));
+    for (var i = 0; i < first; i++) tr.appendChild(el("td", "is-empty", " "));
     for (var d = 1; d <= last; d++) {
       if ((first + d - 1) % 7 === 0 && d !== 1) { tbody.appendChild(tr); tr = el("tr"); }
       var td = el("td");
@@ -112,7 +112,7 @@
       }
       tr.appendChild(td);
     }
-    while (tr.children.length < 7) tr.appendChild(el("td", "is-empty", "."));
+    while (tr.children.length < 7) tr.appendChild(el("td", "is-empty", " "));
     tbody.appendChild(tr);
     table.appendChild(tbody);
     calSlot.appendChild(table);
