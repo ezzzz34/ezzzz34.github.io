@@ -13,7 +13,7 @@ window.INVITATION = {
     // 봉투에서 나오는 대표 사진
     image: "assets/img/main.jpg",
     // 봉투 아래 안내 문구. "" 로 두면 표시되지 않습니다.
-    subtitle: "",
+    subtitle: "2026.12.13 SUN\n11:30 AM",
     // 맨 아래 버튼 문구
     moreLabel: "View Details",
   },
@@ -23,38 +23,41 @@ window.INVITATION = {
    * ------------------------------------------------------------- */
   greeting: {
     title: "초대합니다",
-    // 시(詩)나 짧은 인용구. 필요 없으면 "" 로 비우세요.
-    poem: "서로가 마주 보며 다져온 사랑을\n이제 함께 한곳을 바라보며\n걸어갈 수 있는 큰 사랑으로 키우고자 합니다.",
+    // 앞부분 (포인트 색으로 표시됩니다). 필요 없으면 "" 로 비우세요.
+    poem:
+      "서로가 서로에게 가장 좋은 사람이 되기로 했습니다.\n" +
+      "서로를 아껴온 1,403개의 날을\n" +
+      "이제 평생이라는 시간으로 이어보려고 합니다.",
     body:
-      "저희 두 사람이 사랑과 믿음으로 하나가 되는 날,\n" +
-      "귀한 걸음 하시어 축복해 주시면\n" +
-      "더없는 기쁨으로 간직하겠습니다.",
+      "소중한 시간 함께 하시어\n" +
+      "따뜻한 마음으로 축복해 주시면\n" +
+      "감사하겠습니다.",
   },
 
   /* ---------------------------------------------------------------
    * 3. 신랑 · 신부 정보
    *    nameEn : 커버 큰 제목에 들어가는 영문 이름
    *    relation: "장남", "차녀" 등
-   *    deceased: true 로 두면 성함 앞에 故 표시를 붙이도록 확장 예정
+   *    deceased: true 로 두면 성함 앞에 국화 표시가 붙습니다 (고인)
    * ------------------------------------------------------------- */
   couple: {
     groom: {
       role: "신랑",
-      name: "김철수",
-      nameEn: "Chulsoo",
-      phone: "010-0000-0000",
+      name: "소규성",
+      nameEn: "Kyoosung",
+      phone: "",                 // 예) "010-1234-5678"
       relation: "장남",
-      father: { name: "김아버지", deceased: false },
-      mother: { name: "이어머니", deceased: false },
+      father: { name: "소지섭", deceased: false },
+      mother: { name: "오미숙", deceased: false },
     },
     bride: {
       role: "신부",
-      name: "박영희",
-      nameEn: "Younghee",
-      phone: "010-0000-0000",
-      relation: "장녀",
-      father: { name: "박아버지", deceased: false },
-      mother: { name: "최어머니", deceased: false },
+      name: "김은주",
+      nameEn: "Eunju",
+      phone: "",                 // 예) "010-1234-5678"
+      relation: "차녀",
+      father: { name: "김영균", deceased: true },
+      mother: { name: "이미옥", deceased: false },
     },
   },
 
@@ -63,12 +66,12 @@ window.INVITATION = {
    *    date 는 반드시 "YYYY-MM-DDTHH:mm" 형식 (24시간제)
    * ------------------------------------------------------------- */
   wedding: {
-    date: "2026-11-07T13:00",
+    date: "2026-12-13T11:30",
     venue: {
-      name: "○○웨딩홀",
-      hall: "3층 그랜드홀",
-      address: "서울특별시 강남구 테헤란로 000",
-      tel: "02-000-0000",
+      name: "신도림 더세인트",
+      hall: "6층 그랜드볼룸 홀",
+      address: "서울시 구로구 경인로 662 디큐브시티",
+      tel: "",                   // 웨딩홀 대표번호. 비우면 전화 버튼이 사라집니다.
       // 지도/약도는 다음 단계에서 붙일 예정 (지금은 주소 복사 버튼만 동작)
     },
   },
@@ -92,20 +95,19 @@ window.INVITATION = {
 
   /* ---------------------------------------------------------------
    * 6. 연락처
-   *    필요 없는 줄은 통째로 지우거나 phone 을 "" 로 두세요.
+   *    phone 이 비어 있는 줄은 화면에 표시되지 않습니다.
    * ------------------------------------------------------------- */
   contact: {
     title: "연락하기",
     description: "축하의 마음을 담아 연락 주세요.",
     groomSide: [
-      { label: "신랑", name: "김철수", phone: "010-0000-0000" },
-      { label: "신랑 아버지", name: "김아버지", phone: "010-0000-0000" },
-      { label: "신랑 어머니", name: "이어머니", phone: "010-0000-0000" },
+      { label: "신랑", name: "소규성", phone: "" },
+      { label: "신랑 아버지", name: "소지섭", phone: "" },
+      { label: "신랑 어머니", name: "오미숙", phone: "" },
     ],
     brideSide: [
-      { label: "신부", name: "박영희", phone: "010-0000-0000" },
-      { label: "신부 아버지", name: "박아버지", phone: "010-0000-0000" },
-      { label: "신부 어머니", name: "최어머니", phone: "010-0000-0000" },
+      { label: "신부", name: "김은주", phone: "" },
+      { label: "신부 어머니", name: "이미옥", phone: "" },
     ],
   },
 
@@ -119,6 +121,6 @@ window.INVITATION = {
     // 배경음악 파일 경로. 예) "assets/audio/bgm.mp3"
     // "" 로 두면 우측 상단 음표 버튼이 표시되지 않습니다.
     bgm: "",
-    footerText: "Copyright 2026. 김철수 ♥ 박영희 All rights reserved.",
+    footerText: "Copyright 2026. 소규성 ♥ 김은주 All rights reserved.",
   },
 };
