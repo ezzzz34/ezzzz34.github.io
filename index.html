@@ -5,10 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>모바일 청첩장</title>
 
-  <!-- 카카오톡/문자 공유 시 보이는 미리보기 (나중에 실제 값으로 교체) -->
+  <!-- 카카오톡/문자 공유 시 보이는 미리보기 -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="김철수 ♥ 박영희 결혼합니다" />
-  <meta property="og:description" content="2026년 11월 7일 토요일 오후 1시, ○○웨딩홀" />
+  <meta property="og:title" content="소규성 ♥ 김은주 결혼합니다" />
+  <meta property="og:description" content="2026년 12월 13일 일요일 오전 11시 30분, 신도림 더세인트 6층 그랜드볼룸 홀" />
   <meta property="og:image" content="assets/img/main.jpg" />
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -90,17 +90,15 @@
       <!-- 혼주 / 신랑신부 -->
       <div class="parents">
         <p class="parents__line">
-          <span data-bind="couple.groom.father.name"></span>
+          <span data-parent="couple.groom.father"></span>
           <span class="parents__dot">·</span>
-          <span data-bind="couple.groom.mother.name"></span>
-          <span class="parents__rel">의 <span data-bind="couple.groom.relation"></span></span>
+          <span data-parent="couple.groom.mother"></span><span class="parents__rel">의 <span data-bind="couple.groom.relation"></span></span>
           <strong data-bind="couple.groom.name"></strong>
         </p>
         <p class="parents__line">
-          <span data-bind="couple.bride.father.name"></span>
+          <span data-parent="couple.bride.father"></span>
           <span class="parents__dot">·</span>
-          <span data-bind="couple.bride.mother.name"></span>
-          <span class="parents__rel">의 <span data-bind="couple.bride.relation"></span></span>
+          <span data-parent="couple.bride.mother"></span><span class="parents__rel">의 <span data-bind="couple.bride.relation"></span></span>
           <strong data-bind="couple.bride.name"></strong>
         </p>
       </div>
