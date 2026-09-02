@@ -113,7 +113,14 @@
       <p class="dday" data-slot="dday"></p>
     </section>
 
-    <!-- ④ 장소 -->
+    <!-- ④ 갤러리 -->
+    <section class="section reveal" id="gallery">
+      <p class="section__eyebrow" data-bind="gallery.title"></p>
+      <h2 class="section__title">우리의 순간</h2>
+      <div class="gallery-grid" data-slot="gallery"></div>
+    </section>
+
+    <!-- ⑤ 장소 -->
     <section class="section reveal" id="location">
       <p class="section__eyebrow">LOCATION</p>
       <h2 class="section__title" data-bind="wedding.venue.name"></h2>
@@ -125,13 +132,6 @@
       </div>
       <!-- 지도는 다음 단계에서 이 자리에 삽입 -->
       <div class="map-placeholder">지도는 이후 단계에서 추가 예정입니다</div>
-    </section>
-
-    <!-- ⑤ 갤러리 -->
-    <section class="section reveal" id="gallery">
-      <p class="section__eyebrow" data-bind="gallery.title"></p>
-      <h2 class="section__title">우리의 순간</h2>
-      <div class="gallery-grid" data-slot="gallery"></div>
     </section>
 
     <!-- ⑥ 연락처 -->
