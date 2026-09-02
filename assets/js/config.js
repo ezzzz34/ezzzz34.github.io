@@ -8,12 +8,14 @@ window.INVITATION = {
    * 1. 메인 커버
    * ------------------------------------------------------------- */
   cover: {
-    // 커버 위쪽 작은 글씨
-    label: "WE ARE GETTING MARRIED",
-    // 커버 대표 사진 (assets/img/ 안에 파일을 넣고 파일명만 바꾸세요)
+    // 큰 제목 첫 줄 (아래 줄에는 신랑·신부 영문 이름이 자동으로 들어갑니다)
+    titleTop: "The Wedding of",
+    // 봉투에서 나오는 대표 사진
     image: "assets/img/main.jpg",
-    // 커버 아래 안내 문구
-    subtitle: "2026년 11월 7일 토요일 오후 1시\n○○웨딩홀 3층 그랜드홀",
+    // 봉투 아래 안내 문구. "" 로 두면 표시되지 않습니다.
+    subtitle: "",
+    // 맨 아래 버튼 문구
+    moreLabel: "View Details",
   },
 
   /* ---------------------------------------------------------------
@@ -31,6 +33,7 @@ window.INVITATION = {
 
   /* ---------------------------------------------------------------
    * 3. 신랑 · 신부 정보
+   *    nameEn : 커버 큰 제목에 들어가는 영문 이름
    *    relation: "장남", "차녀" 등
    *    deceased: true 로 두면 성함 앞에 故 표시를 붙이도록 확장 예정
    * ------------------------------------------------------------- */
@@ -38,6 +41,7 @@ window.INVITATION = {
     groom: {
       role: "신랑",
       name: "김철수",
+      nameEn: "Chulsoo",
       phone: "010-0000-0000",
       relation: "장남",
       father: { name: "김아버지", deceased: false },
@@ -46,6 +50,7 @@ window.INVITATION = {
     bride: {
       role: "신부",
       name: "박영희",
+      nameEn: "Younghee",
       phone: "010-0000-0000",
       relation: "장녀",
       father: { name: "박아버지", deceased: false },
@@ -111,6 +116,9 @@ window.INVITATION = {
     showDday: true,       // D-day 카운터 표시
     showCalendar: true,   // 달력 표시
     shareButton: true,    // 링크 복사(공유) 버튼 표시
+    // 배경음악 파일 경로. 예) "assets/audio/bgm.mp3"
+    // "" 로 두면 우측 상단 음표 버튼이 표시되지 않습니다.
+    bgm: "",
     footerText: "Copyright 2026. 김철수 ♥ 박영희 All rights reserved.",
   },
 };
