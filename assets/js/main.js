@@ -46,6 +46,18 @@
     });
   }
 
+  /* 고인(故) 표시용 국화 아이콘 */
+  function chrysanthemum() {
+    var petals = "";
+    for (var i = 0; i < 12; i++) {
+      petals += '<ellipse cx="12" cy="6.4" rx="2.1" ry="5.4" fill="none" ' +
+                'stroke="currentColor" stroke-width=".8" ' +
+                'transform="rotate(' + (i * 30) + ' 12 12)"/>';
+    }
+    return '<svg class="chrysanthemum" viewBox="0 0 24 24" aria-hidden="true">' +
+           petals + '<circle cx="12" cy="12" r="2.6" fill="currentColor"/></svg>';
+  }
+
   /* ---------- 1) data-bind 로 텍스트/속성 채우기 ---------- */
   $$("[data-bind]").forEach(function (node) {
     var v = get(node.getAttribute("data-bind"));
@@ -55,6 +67,13 @@
   $$("[data-bind-src]").forEach(function (node) {
     var v = get(node.getAttribute("data-bind-src"));
     if (v) { withFallback(node, "PHOTO"); node.setAttribute("src", v); }
+  });
+  // 혼주 성함 : deceased 가 true 면 이름 앞에 국화 표시를 붙입니다
+  $$("[data-parent]").forEach(function (node) {
+    var p = get(node.getAttribute("data-parent"));
+    if (!p || !p.name) { node.hidden = true; return; }
+    node.innerHTML = p.deceased ? chrysanthemum() : "";
+    node.appendChild(document.createTextNode(p.name));
   });
   $$("[data-bind-href]").forEach(function (node) {
     var raw = node.getAttribute("data-bind-href");       // 예: "tel:wedding.venue.tel"
@@ -220,6 +239,12 @@
         row.appendChild(actions);
         contactSlot.appendChild(row);
       });
+
+    // 전화번호가 하나도 없으면 연락처 섹션 자체를 감춥니다
+    if (!contactSlot.children.length) {
+      var section = contactSlot.closest ? contactSlot.closest(".section") : null;
+      if (section) section.hidden = true;
+    }
   }
 
   /* ---------- 7) 복사 / 공유 ---------- */
