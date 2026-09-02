@@ -152,9 +152,12 @@ a { color: inherit; text-decoration: none; }
 
 /* 봉투 아래 안내 문구 (config 의 cover.subtitle 이 비어 있으면 숨겨집니다) */
 .cover__subtitle {
-  font-size: 14px;
-  color: var(--color-muted);
-  margin: 26px 0 0;
+  font-family: var(--font-display);
+  font-size: 16px;
+  line-height: 1.9;
+  letter-spacing: .02em;
+  color: var(--color-title);
+  margin: 30px 0 0;
   white-space: pre-line;
 }
 
@@ -208,6 +211,14 @@ a { color: inherit; text-decoration: none; }
   margin-left: 6px;
 }
 .parents__dot { margin: 0 4px; }
+/* 고인 표시 국화 */
+.chrysanthemum {
+  width: 12px; height: 12px;
+  display: inline-block;
+  vertical-align: -1px;
+  margin-right: 3px;
+  color: var(--color-muted);
+}
 .parents__rel { font-size: 13px; }
 
 /* ========================= ③ 달력 / D-day ========================= */
