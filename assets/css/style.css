@@ -12,10 +12,14 @@
   --color-envelope:  #ccd095;   /* 편지 봉투 색 */
   --color-title:     #484944;   /* 커버 큰 제목 색 */
 
-  --font-serif:  "Gowun Batang", serif;
-  --font-sans:   "Noto Sans KR", sans-serif;
-  --font-latin:  "Cormorant Garamond", serif;
-  --font-display: "Jost", "Century Gothic", "Noto Sans KR", sans-serif;  /* 커버 제목용 */
+  /* 사이트 전체가 이 한 글꼴로 통일되어 있습니다.
+     (영문은 Jost, 한글은 Jost 에 없는 글자라 Noto Sans KR 로 자동 대체) */
+  --font-display: "Jost", "Century Gothic", "Noto Sans KR", sans-serif;
+  /* 아래 세 가지는 --font-display 를 그대로 따라갑니다.
+     나중에 부분별로 다른 글꼴을 쓰고 싶으면 여기만 따로 지정하세요. */
+  --font-serif:  var(--font-display);
+  --font-sans:   var(--font-display);
+  --font-latin:  var(--font-display);
 
   --paper-width: 430px;         /* 청첩장 최대 폭 */
   --radius: 4px;
@@ -198,35 +202,56 @@ a { color: inherit; text-decoration: none; }
   white-space: pre-line;
   margin: 0 0 40px;
 }
-.parents__line {
-  font-size: 14px;
-  margin: 6px 0;
-  color: var(--color-muted);
+/* 혼주 두 줄을 하나의 격자로 묶어, 어느 브라우저에서든 열이 정확히 맞도록 합니다.
+   왼쪽 칸(혼주)은 오른쪽 정렬, 오른쪽 칸(이름)은 왼쪽 정렬 → 두 줄의 경계가 일치 */
+.parents {
+  display: inline-grid;
+  grid-template-columns: auto auto;
+  align-items: baseline;
+  column-gap: 10px;
+  row-gap: 10px;
 }
-.parents__line strong {
-  font-family: var(--font-serif);
+.parents__who {
+  position: relative;              /* 국화 아이콘의 기준점 */
+  justify-self: end;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+.parents__name {
+  justify-self: start;
+  margin: 0;
   font-weight: 700;
   font-size: 16px;
+  line-height: 1.6;
   color: var(--color-text);
-  margin-left: 6px;
+  white-space: nowrap;
 }
 .parents__dot { margin: 0 4px; }
-/* 고인 표시 국화 */
+.parents__rel { font-size: 13px; }
+
+/* 고인 표시 국화 — 글줄 바깥(왼쪽)에 띄워 두어 열 정렬에 영향을 주지 않습니다 */
 .chrysanthemum {
   /* iOS 사파리는 SVG 기본 크기를 100% 로 잡아 크게 나오므로 값을 못 박습니다 */
   width: 12px !important;
   height: 12px !important;
-  min-width: 12px;
   max-width: 12px;
   max-height: 12px;
-  flex: none;
-  display: inline-block;
-  vertical-align: middle;
-  margin: 0 3px 2px 0;
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-right: 4px;
   color: var(--color-muted);
   overflow: visible;
 }
-.parents__rel { font-size: 13px; }
+
+@media (max-width: 360px) {
+  .parents__who  { font-size: 13px; }
+  .parents__name { font-size: 15px; }
+}
 
 /* ========================= ③ 달력 / D-day ========================= */
 .calendar {
@@ -265,6 +290,18 @@ a { color: inherit; text-decoration: none; }
   background: var(--color-point);
   color: #fff;
 }
+/* 예식 일시 : 날짜와 시간의 글자 크기를 맞추고 행간을 좁힙니다 */
+#calendar .section__title,
+#calendar .section__lead {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--color-text);
+  margin: 0;
+}
+#calendar .section__lead { margin-bottom: 26px; }
+
 .dday {
   margin: 24px 0 0;
   font-size: 14px;
