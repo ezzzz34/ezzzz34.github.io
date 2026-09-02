@@ -13,7 +13,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Jost:wght@300;400;500&family=Noto+Sans+KR:wght@300;400;500&family=Cormorant+Garamond:wght@300;400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
@@ -87,20 +87,13 @@
       <div class="divider" aria-hidden="true"></div>
       <p class="greeting__body" data-bind="greeting.body"></p>
 
-      <!-- 혼주 / 신랑신부 -->
+      <!-- 혼주 / 신랑신부 : 2열 격자(혼주 | 이름) 로 두 줄의 열을 정확히 맞춥니다 -->
       <div class="parents">
-        <p class="parents__line">
-          <span data-parent="couple.groom.father"></span>
-          <span class="parents__dot">·</span>
-          <span data-parent="couple.groom.mother"></span><span class="parents__rel">의 <span data-bind="couple.groom.relation"></span></span>
-          <strong data-bind="couple.groom.name"></strong>
-        </p>
-        <p class="parents__line">
-          <span data-parent="couple.bride.father"></span>
-          <span class="parents__dot">·</span>
-          <span data-parent="couple.bride.mother"></span><span class="parents__rel">의 <span data-bind="couple.bride.relation"></span></span>
-          <strong data-bind="couple.bride.name"></strong>
-        </p>
+        <p class="parents__who"><span data-parent="couple.groom.father"></span><span class="parents__dot">·</span><span data-parent="couple.groom.mother"></span><span class="parents__rel">의 <span data-bind="couple.groom.relation"></span></span></p>
+        <p class="parents__name" data-bind="couple.groom.name"></p>
+
+        <p class="parents__who"><span data-parent="couple.bride.father"></span><span class="parents__dot">·</span><span data-parent="couple.bride.mother"></span><span class="parents__rel">의 <span data-bind="couple.bride.relation"></span></span></p>
+        <p class="parents__name" data-bind="couple.bride.name"></p>
       </div>
     </section>
 
