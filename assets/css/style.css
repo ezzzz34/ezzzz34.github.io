@@ -9,10 +9,13 @@
   --color-line:      #e3ddd4;   /* 구분선 */
   --color-point:     #b08d6a;   /* 포인트(강조) 색 */
   --color-point-bg:  #f1e9df;   /* 포인트 배경 */
+  --color-envelope:  #ccd095;   /* 편지 봉투 색 */
+  --color-title:     #484944;   /* 커버 큰 제목 색 */
 
   --font-serif:  "Gowun Batang", serif;
   --font-sans:   "Noto Sans KR", sans-serif;
   --font-latin:  "Cormorant Garamond", serif;
+  --font-display: "Jost", "Century Gothic", "Noto Sans KR", sans-serif;  /* 커버 제목용 */
 
   --paper-width: 430px;         /* 청첩장 최대 폭 */
   --radius: 4px;
@@ -20,6 +23,7 @@
 
 /* ========================= 기본 리셋 ========================= */
 * { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 html, body { margin: 0; padding: 0; }
 body {
   background: var(--color-bg);
@@ -77,57 +81,105 @@ a { color: inherit; text-decoration: none; }
   background: linear-gradient(to bottom, transparent, var(--color-line), transparent);
 }
 
-/* ========================= ① 커버 ========================= */
+/* ========================= ① 커버 (편지 봉투) ========================= */
 .cover {
-  padding: 56px 28px 40px;
+  position: relative;
+  padding: 46px 30px 56px;
   text-align: center;
 }
-.cover__label {
-  font-family: var(--font-latin);
-  font-size: 12px;
-  letter-spacing: .32em;
-  color: var(--color-muted);
-  margin: 0 0 28px;
+
+/* 우측 상단 음표 버튼 */
+.music-btn {
+  position: absolute;
+  top: 22px; right: 20px;
+  width: 34px; height: 34px;
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0; border: 0; background: none;
+  color: #b6b6b4;
+  transition: color .2s;
 }
-.cover__photo {
-  border-radius: 200px 200px 0 0;  /* 아치형 사진 */
-  overflow: hidden;
-  aspect-ratio: 3 / 4;
+.music-btn.is-playing { color: var(--color-envelope); }
+
+/* 큰 제목 */
+.cover__title {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 33px;
+  line-height: 1.32;
+  letter-spacing: -.01em;
+  color: var(--color-title);
+  margin: 0 0 26px;
+}
+.cover__title span { display: block; }
+.cover__title span span { display: inline; }
+.cover__amp { margin: 0; }
+
+/* 봉투 + 사진 */
+.envelope {
+  position: relative;
+  width: 100%;
+  padding-bottom: 32.9%;      /* 사진 아래로 내려오는 봉투 높이 */
+}
+.envelope__photo {
+  position: relative;
+  z-index: 1;
+  width: 82.6%;
+  margin: 0 auto;
+  padding: 4.4% 3.9% 6.1%;    /* 사진을 감싸는 흰 여백 */
+  background: #fff;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, .13);
+}
+.envelope__photo img {
+  width: 100%;
+  aspect-ratio: 525 / 790;
+  object-fit: cover;
   background: var(--color-point-bg);
 }
-.cover__photo img { width: 100%; height: 100%; object-fit: cover; }
-.cover__names {
-  font-family: var(--font-serif);
-  font-size: 26px;
-  font-weight: 400;
-  letter-spacing: .08em;
-  margin: 32px 0 14px;
+.envelope__front {
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 100%;
+  height: auto;
+  z-index: 2;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, .10));
 }
-.cover__amp {
-  font-family: var(--font-latin);
-  color: var(--color-point);
-  margin: 0 10px;
+.envelope__paper { fill: var(--color-envelope); }
+.envelope__fold {
+  fill: none;
+  stroke: rgba(0, 0, 0, .07);
+  stroke-width: 2;
 }
+
+/* 봉투 아래 안내 문구 (config 의 cover.subtitle 이 비어 있으면 숨겨집니다) */
 .cover__subtitle {
   font-size: 14px;
   color: var(--color-muted);
-  margin: 0;
+  margin: 26px 0 0;
   white-space: pre-line;
 }
-.scroll-hint {
-  width: 1px; height: 46px;
-  margin: 34px auto 0;
-  background: var(--color-line);
-  position: relative; overflow: hidden;
+
+/* View Details */
+.cover__more {
+  display: block;
+  margin-top: 34px;
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 21px;
+  color: var(--color-title);
 }
-.scroll-hint span {
-  position: absolute; inset: 0;
-  background: var(--color-point);
-  animation: scrollDown 1.8s ease-in-out infinite;
+.cover__more svg {
+  display: block;
+  margin: 10px auto 0;
+  animation: chevronNudge 2.2s ease-in-out infinite;
 }
-@keyframes scrollDown {
-  0%   { transform: translateY(-100%); }
-  100% { transform: translateY(100%); }
+@keyframes chevronNudge {
+  0%, 70%, 100% { transform: translateY(0); }
+  35%           { transform: translateY(5px); }
+}
+
+@media (max-width: 380px) {
+  .cover__title { font-size: 29px; }
+  .cover__more  { font-size: 19px; }
 }
 
 /* ========================= ② 인사말 ========================= */
@@ -333,8 +385,9 @@ a { color: inherit; text-decoration: none; }
 }
 .reveal.is-visible { opacity: 1; transform: none; }
 @media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
   .reveal { opacity: 1; transform: none; transition: none; }
-  .scroll-hint span { animation: none; }
+  .cover__more svg { animation: none; }
 }
 
 /* ========================= 토스트 ========================= */
