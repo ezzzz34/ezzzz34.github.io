@@ -132,54 +132,113 @@
     }
   }
 
-  /* ---------- 1-2) 페이지 전체 뒤에서 내리는 눈 ----------
-   * 화면 크기의 고정 캔버스(청첩장 내용 뒤)에 눈송이를 그립니다.
-   * 흰 바탕에서도 보이도록 옅은 회청색이고, 크기가 클수록 가깝게(진하고 빠르게) 보입니다.
+  /* ---------- 1-2) 페이지 전체 뒤에서 내리는 눈 결정 (+ 아주 드물게 빨간 하트) ----------
+   * 화면 크기의 고정 캔버스(청첩장 내용 뒤)에 그립니다.
+   * 결정은 끝이 둥근 6갈래 모양을 미리 한 장 그려 두고(스프라이트) 크기·회전만 바꿔 찍어서 가볍습니다.
+   * 하트는 정말 드물게: 눈이 내리기 시작하고 약 15초 뒤 첫 하트 1개, 이후 새 눈송이마다 1/150 확률
+   *   (평균 약 2분에 1개), 화면에는 동시에 1개까지만 → 보통 방문(1~2분) 동안 한두 개 보이는 정도.
    * 다른 앱으로 나가 있으면 멈춰서 배터리를 아낍니다. */
+  var SNOW_COLOR = "#dfe3e8";                           // 연한 회색
+  var HEART_COLOR = "#d8394f";                          // 빨간 하트
+  var HEART_CHANCE = 1 / 150, HEART_MAX = 1, FIRST_HEART_SEC = 15;
+
+  function makeSprite(draw) {
+    var c = document.createElement("canvas");
+    c.width = c.height = 96;                            // 넉넉한 해상도로 그려 두고 축소해서 사용
+    var g = c.getContext("2d");
+    g.translate(48, 48);
+    draw(g);
+    return c;
+  }
+  var crystal = makeSprite(function (g) {
+    g.strokeStyle = SNOW_COLOR;
+    g.fillStyle = SNOW_COLOR;
+    g.lineCap = "round";
+    g.lineJoin = "round";
+    for (var k = 0; k < 6; k++) {
+      g.save();
+      g.rotate(k * Math.PI / 3);
+      g.lineWidth = 7.5;                                // 굵고 끝이 둥근 가지 → 뾰족하지 않게
+      g.beginPath(); g.moveTo(0, 0); g.lineTo(0, -36); g.stroke();
+      g.lineWidth = 6;
+      g.beginPath();                                    // 곁가지 (V 모양)
+      g.moveTo(0, -20); g.lineTo(-11, -30);
+      g.moveTo(0, -20); g.lineTo(11, -30);
+      g.stroke();
+      g.restore();
+    }
+    g.beginPath(); g.arc(0, 0, 9, 0, Math.PI * 2); g.fill();
+  });
+  var heart = makeSprite(function (g) {
+    g.fillStyle = HEART_COLOR;
+    g.beginPath();
+    g.moveTo(0, 34);
+    g.bezierCurveTo(-44, 6, -38, -34, -14, -34);
+    g.bezierCurveTo(-4, -34, 0, -26, 0, -20);
+    g.bezierCurveTo(0, -26, 4, -34, 14, -34);
+    g.bezierCurveTo(38, -34, 44, 6, 0, 34);
+    g.fill();
+  });
+
   function startSnow() {
     var canvas = $('[data-slot="snow"]');
     if (!canvas || !canvas.getContext || startSnow.started) return;
     startSnow.started = true;
     var ctx = canvas.getContext("2d");
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
-    var W = 0, H = 0, flakes = [], running = false, last = 0;
+    var W = 0, H = 0, flakes = [], running = false, last = 0, hearts = 0;
+    var elapsed = 0, firstHeartDone = false;
 
     function resize() {
       W = window.innerWidth; H = window.innerHeight;
       canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      var want = Math.min(90, Math.round(W * H / 7500));  // 폰 약 45개, PC 최대 90개
-      while (flakes.length < want) flakes.push(flake(true));
-      flakes.length = want;
+      var want = Math.min(80, Math.round(W * H / 9000)); // 폰 약 40개, PC 최대 80개
+      while (flakes.length < want) flakes.push(flake(true, false));
+      while (flakes.length > want) { var f = flakes.pop(); if (f.heart) hearts--; }
     }
-    function flake(anywhere) {
+    function flake(anywhere, allowHeart) {
+      var isHeart = allowHeart && hearts < HEART_MAX &&
+        ((!firstHeartDone && elapsed > FIRST_HEART_SEC) || Math.random() < HEART_CHANCE);
+      if (isHeart) { hearts++; firstHeartDone = true; }
       var depth = Math.random();                          // 0 = 멀리, 1 = 가까이
-      var r = 1.2 + depth * 2.6;                          // 반지름 1.2 ~ 3.8px
       return {
+        heart: isHeart,
         x: Math.random() * W,
-        y: anywhere ? Math.random() * H : -r * 2,
-        r: r,
-        vy: 14 + depth * 30 + Math.random() * 6,         // 초당 낙하 px
+        y: anywhere ? Math.random() * H : -20,
+        size: isHeart ? 11 + depth * 4 : 9 + depth * 9,   // 지름 px (결정 9~18, 하트 11~15)
+        vy: 14 + depth * 26 + Math.random() * 6,         // 초당 낙하 px
         amp: 8 + Math.random() * 18,
         freq: 0.3 + Math.random() * 0.6,
         phase: Math.random() * Math.PI * 2,
-        a: 0.28 + depth * 0.42,
+        rot: Math.random() * Math.PI * 2,
+        spin: (Math.random() - 0.5) * (isHeart ? 0.6 : 1.2), // 천천히 회전
+        a: isHeart ? 0.85 : 0.55 + depth * 0.45,
       };
     }
     function frame(t) {
       if (!running) return;
       var dt = last ? Math.min((t - last) / 1000, 0.05) : 0.016;
       last = t;
+      elapsed += dt;
       ctx.clearRect(0, 0, W, H);
       for (var i = 0; i < flakes.length; i++) {
         var f = flakes[i];
         f.y += f.vy * dt;
         f.phase += f.freq * dt;
-        if (f.y - f.r > H) { flakes[i] = flake(false); continue; }
-        ctx.beginPath();
-        ctx.arc(f.x + Math.sin(f.phase) * f.amp, f.y, f.r, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(178,190,206," + f.a + ")";
-        ctx.fill();
+        f.rot += f.spin * dt;
+        if (f.y - f.size > H) {
+          if (f.heart) hearts--;
+          flakes[i] = flake(false, true);
+          continue;
+        }
+        var rot = f.heart ? Math.sin(f.phase) * 0.35 : f.rot; // 하트는 좌우로 살랑
+        ctx.save();
+        ctx.globalAlpha = f.a;
+        ctx.translate(f.x + Math.sin(f.phase) * f.amp, f.y);
+        ctx.rotate(rot);
+        ctx.drawImage(f.heart ? heart : crystal, -f.size / 2, -f.size / 2, f.size, f.size);
+        ctx.restore();
       }
       requestAnimationFrame(frame);
     }

@@ -9,9 +9,9 @@
   --color-line:      #e3ddd4;   /* 구분선 */
   --color-point:     #b08d6a;   /* 포인트(강조) 색 */
   --color-point-bg:  #f1e9df;   /* 포인트 배경 */
-  --color-envelope:  #ccd095;   /* 편지 봉투 색 (앞판) */
-  --color-envelope-flap: #c5c98b; /* 봉투 덮개 바깥면 */
-  --color-envelope-in:   #b8bc7e; /* 봉투 안쪽(뒷판·덮개 안쪽) */
+  --color-envelope:  #6a3640;   /* 편지 봉투 색 (앞판) — 딥 클라렛 */
+  --color-envelope-flap: #612f39; /* 봉투 덮개 바깥면 */
+  --color-envelope-in:   #50272f; /* 봉투 안쪽(뒷판·덮개 안쪽) */
   --color-title:     #484944;   /* 커버 큰 제목 색 */
 
   /* 사이트 전체가 이 한 글꼴로 통일되어 있습니다.
@@ -172,7 +172,7 @@ a { color: inherit; text-decoration: none; }
 .envelope__paper { fill: var(--color-envelope); }
 .envelope__fold {
   fill: none;
-  stroke: rgba(0, 0, 0, .07);
+  stroke: rgba(255, 255, 255, .10);  /* 어두운 봉투라 밝은 접힌 선 */
   stroke-width: 2;
 }
 
