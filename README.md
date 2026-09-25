@@ -10,7 +10,9 @@ assets/
   css/style.css           디자인. 맨 위 :root 변수에서 색·폰트·폭 일괄 변경
   js/config.js            ★ 내용(이름·날짜·장소·연락처·사진 목록) — 대부분의 수정은 여기서
   js/main.js              화면 렌더링 로직 (달력·D-day·갤러리·복사 등)
-  img/                    사진 폴더 (아직 비어 있음 — 파일이 없으면 자리표시 이미지가 표시됨)
+  img/main.jpg            커버(봉투 속) 사진 — 1050×1580
+  img/gallery/            갤러리 사진 — 001.jpg(긴 변 1600px) + 001-thumb.jpg(480px 정사각)
+  audio/bg.mp3            배경음악 (128kbps)
 ```
 
 ## 수정 방법
@@ -20,7 +22,7 @@ assets/
 | 이름, 예식 일시, 장소, 연락처, 인사말 | `assets/js/config.js` |
 | 색상, 폰트, 여백, 최대 폭 | `assets/css/style.css` 의 `:root` |
 | 섹션 순서 변경 / 새 섹션 추가 | `index.html` |
-| 사진 추가/교체 | GitHub 저장소 화면에서 `assets/img/` 폴더로 사진을 드래그해 업로드 (파일명은 `main.jpg`, `gallery-01.jpg` … 로 맞추면 코드 수정 불필요) |
+| 갤러리 사진 추가/교체 | `assets/img/gallery/`에 원본·썸네일을 넣고 `config.js`의 `gallery.images` 번호 목록 수정 |
 
 `config.js`의 값은 `index.html`의 `data-bind="경로"` 속성과 연결됩니다.
 예: `data-bind="couple.groom.name"` → `INVITATION.couple.groom.name` 값이 들어갑니다.
@@ -39,9 +41,7 @@ python3 -m http.server 8000
 
 ## 다음 단계 후보
 
-- [ ] 카카오맵 / 네이버지도 약도 삽입 (오시는 길)
 - [ ] 마음 전하실 곳 (계좌번호 + 복사 버튼)
 - [ ] 참석 여부(RSVP) 폼, 방명록
 - [ ] 카카오톡 공유 SDK 연동 (미리보기 카드)
-- [ ] 배경음악, 첫 진입 인트로 애니메이션
-- [ ] 실제 사진 업로드 및 og:image 갱신
+- [ ] og:image 절대경로 갱신 (카카오톡 미리보기)

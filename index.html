@@ -27,13 +27,16 @@
 
     <!-- ① 커버 : 편지 봉투에서 사진이 나오는 화면 -->
     <section class="cover" id="cover">
-      <button class="music-btn" type="button" data-slot="music" aria-label="배경음악 켜기/끄기">
-        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
-          <path d="M9 18V5l10-2v13" fill="none" stroke="currentColor" stroke-width="1.6"
+      <!-- 배경음악 켜기/끄기 (기본: 켜짐) -->
+      <button class="music-btn is-on" type="button" data-slot="music" aria-pressed="true" aria-label="배경음악 끄기">
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <path d="M9 18V5l10-2v13" fill="none" stroke="currentColor" stroke-width="1.8"
                 stroke-linecap="round" stroke-linejoin="round" />
           <circle cx="6.5" cy="18" r="2.6" fill="currentColor" />
           <circle cx="16.5" cy="16" r="2.6" fill="currentColor" />
+          <path class="music-btn__slash" d="M3 3 21 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
         </svg>
+        <span class="music-btn__label">ON</span>
       </button>
 
       <h1 class="cover__title">
@@ -58,7 +61,11 @@
         <!-- 사진 : 봉투 바닥선 아래로는 잘려서 보이지 않습니다 -->
         <div class="envelope__pocket">
           <div class="envelope__photo">
-            <img data-bind-src="cover.image" alt="메인 사진" />
+            <div class="envelope__frame">
+              <img data-bind-src="cover.image" alt="메인 사진" />
+              <!-- 사진 안에서만 내리는 눈 -->
+              <canvas class="snow" data-slot="snow" aria-hidden="true"></canvas>
+            </div>
           </div>
         </div>
 
@@ -78,21 +85,14 @@
           </g>
         </svg>
 
-        <!-- 봉투 덮개 + 하트 실링 -->
+        <!-- 봉투 덮개 -->
         <div class="envelope__flap">
           <svg viewBox="0 0 688 262" aria-hidden="true" focusable="false">
             <path class="envelope__flap-paper"
                   d="M0,10 Q0,0 10,0 L678,0 Q688,0 688,10 L356,252 Q344,261 332,252 Z" />
           </svg>
-          <span class="envelope__seal" aria-hidden="true">
-            <svg viewBox="0 0 24 24"><path d="M12 20.3 4.9 13.6a4.4 4.4 0 0 1 6.2-6.3l.9.9.9-.9a4.4 4.4 0 0 1 6.2 6.3Z"/></svg>
-          </span>
         </div>
 
-        <!-- 사진이 나올 때 퍼지는 작은 하트들 -->
-        <div class="envelope__hearts" aria-hidden="true">
-          <i></i><i></i><i></i><i></i><i></i><i></i>
-        </div>
       </div>
 
       <p class="cover__subtitle" data-bind="cover.subtitle"></p>
@@ -177,10 +177,19 @@
 
   <!-- 갤러리 라이트박스 -->
   <div class="lightbox" data-slot="lightbox" hidden>
-    <button class="lightbox__close" type="button" aria-label="닫기">&times;</button>
-    <button class="lightbox__nav lightbox__nav--prev" type="button" aria-label="이전">&#8249;</button>
-    <img class="lightbox__img" src="" alt="" />
-    <button class="lightbox__nav lightbox__nav--next" type="button" aria-label="다음">&#8250;</button>
+    <div class="lightbox__stage">
+      <img class="lightbox__img" src="" alt="" />
+      <!-- 사진 오른쪽 위 X -->
+      <button class="lightbox__close" type="button" aria-label="닫기">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+      </button>
+    </div>
+    <button class="lightbox__nav lightbox__nav--prev" type="button" aria-label="이전 사진">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+    </button>
+    <button class="lightbox__nav lightbox__nav--next" type="button" aria-label="다음 사진">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+    </button>
     <p class="lightbox__count"></p>
   </div>
 

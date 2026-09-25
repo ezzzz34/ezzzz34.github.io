@@ -99,6 +99,8 @@
       opened = true;
       envelope.classList.remove("is-closed");
       if (!reduce) envelope.classList.add("is-opening");
+      // 사진이 다 올라온 뒤 눈 내리기 시작
+      setTimeout(startSnow, reduce ? 0 : 2300);
     };
     if (reduce) {
       openEnvelope();
@@ -112,6 +114,75 @@
       }
       setTimeout(openEnvelope, 2500);
     }
+  }
+
+  /* ---------- 1-2) 커버 사진 안에서만 내리는 눈 ----------
+   * 사진 틀 크기의 캔버스에 눈송이를 그립니다. 화면 밖에 있으면 멈춰서 배터리를 아낍니다. */
+  function startSnow() {
+    var canvas = $('[data-slot="snow"]');
+    if (!canvas || !canvas.getContext || startSnow.started) return;
+    startSnow.started = true;
+    var ctx = canvas.getContext("2d");
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var W = 0, H = 0, flakes = [], running = false, visible = true, last = 0;
+
+    function resize() {
+      W = canvas.clientWidth; H = canvas.clientHeight;
+      canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    function flake(anywhere) {
+      var r = Math.random() * 1.9 + 0.7;                 // 반지름 0.7 ~ 2.6px
+      return {
+        x: Math.random() * W,
+        y: anywhere ? Math.random() * H : -r * 2,
+        r: r,
+        vy: 12 + r * 9 + Math.random() * 8,              // 초당 낙하 px (큰 눈이 더 빨리)
+        amp: 6 + Math.random() * 14,                     // 좌우 흔들림 폭
+        freq: 0.4 + Math.random() * 0.8,
+        phase: Math.random() * Math.PI * 2,
+        a: 0.55 + Math.random() * 0.4,
+      };
+    }
+    function frame(t) {
+      if (!running) return;
+      var dt = last ? Math.min((t - last) / 1000, 0.05) : 0.016;
+      last = t;
+      ctx.clearRect(0, 0, W, H);
+      for (var i = 0; i < flakes.length; i++) {
+        var f = flakes[i];
+        f.y += f.vy * dt;
+        f.phase += f.freq * dt;
+        if (f.y - f.r > H) { flakes[i] = flake(false); continue; }
+        var x = f.x + Math.sin(f.phase) * f.amp;
+        ctx.beginPath();
+        ctx.arc(x, f.y, f.r, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(255,255,255," + f.a + ")";
+        ctx.shadowColor = "rgba(255,255,255,.8)";
+        ctx.shadowBlur = f.r * 2;
+        ctx.fill();
+      }
+      requestAnimationFrame(frame);
+    }
+    function play() {
+      if (running || !visible || document.hidden) return;
+      running = true; last = 0; requestAnimationFrame(frame);
+    }
+    function stop() { running = false; }
+
+    resize();
+    var count = Math.round(W * H / 2600);               // 사진 크기에 비례 (모바일 약 50개)
+    for (var i = 0; i < count; i++) flakes.push(flake(true));
+    canvas.classList.add("is-on");
+    window.addEventListener("resize", resize);
+    document.addEventListener("visibilitychange", function () { document.hidden ? stop() : play(); });
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (es) {
+        visible = es[0].isIntersecting;
+        visible ? play() : stop();
+      }).observe(canvas);
+    }
+    play();
   }
 
   /* ---------- 2) 예식 일시 ---------- */
@@ -189,9 +260,13 @@
 
   /* ---------- 5) 갤러리 + 라이트박스 ---------- */
   var gallerySlot = $('[data-slot="gallery"]');
-  var images = (C.gallery && C.gallery.images) || [];
+  var G = C.gallery || {};
+  var folder = G.folder || "";
+  var images = (G.images || []).map(function (n) {
+    return { full: folder + n + ".jpg", thumb: folder + n + "-thumb.jpg" };
+  });
   if (gallerySlot) {
-    images.forEach(function (src, idx) {
+    images.forEach(function (im, idx) {
       var btn = el("button");
       btn.type = "button";
       btn.setAttribute("aria-label", "사진 " + (idx + 1) + " 크게 보기");
@@ -199,7 +274,7 @@
       img.alt = "웨딩 사진 " + (idx + 1);
       img.loading = "lazy";
       withFallback(img, String(idx + 1));
-      img.src = src;
+      img.src = im.thumb;
       btn.appendChild(img);
       btn.addEventListener("click", function () { openLightbox(idx); });
       gallerySlot.appendChild(btn);
@@ -211,6 +286,10 @@
   var lbCount = lb && $(".lightbox__count", lb);
   var cur = 0;
 
+  function preload(i) {
+    var n = images[(i + images.length) % images.length];
+    if (n) { var p = new Image(); p.src = n.full; }
+  }
   function openLightbox(i) {
     if (!lb || !images.length) return;
     cur = i;
@@ -228,8 +307,13 @@
     render();
   }
   function render() {
-    lbImg.src = images[cur];
+    lbImg.classList.remove("is-loaded");
+    lbImg.onload = function () { lbImg.classList.add("is-loaded"); };
+    lbImg.src = images[cur].full;
+    lbImg.alt = "웨딩 사진 " + (cur + 1);
+    if (lbImg.complete && lbImg.naturalWidth) lbImg.classList.add("is-loaded");
     lbCount.textContent = (cur + 1) + " / " + images.length;
+    preload(cur + 1); preload(cur - 1);                 // 양옆 사진 미리 불러오기
   }
   if (lb) {
     $(".lightbox__close", lb).addEventListener("click", closeLightbox);
@@ -241,6 +325,17 @@
       if (e.key === "Escape") closeLightbox();
       if (e.key === "ArrowLeft") move(-1);
       if (e.key === "ArrowRight") move(1);
+    });
+    // 손가락으로 좌우 밀어서 넘기기
+    var sx = null, sy = null;
+    lb.addEventListener("touchstart", function (e) {
+      sx = e.touches[0].clientX; sy = e.touches[0].clientY;
+    }, { passive: true });
+    lb.addEventListener("touchend", function (e) {
+      if (sx == null) return;
+      var dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+      if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) move(dx < 0 ? 1 : -1);
+      sx = sy = null;
     });
   }
 
@@ -403,7 +498,10 @@
     shareSlot.appendChild(b);
   }
 
-  /* ---------- 8) 배경음악 (config 의 options.bgm 에 파일 경로가 있을 때만) ---------- */
+  /* ---------- 8) 배경음악 ----------
+   * 기본은 '켜짐'. 브라우저는 소리 있는 자동재생을 막기 때문에
+   * 접속 즉시 재생을 시도하고, 막히면 사용자의 첫 터치/클릭 때 재생합니다.
+   * 버튼을 누르면 꺼짐 ↔ 켜짐 전환. 다른 앱으로 나가면 잠시 멈췄다가 돌아오면 이어서 재생. */
   var musicBtn = $('[data-slot="music"]');
   if (musicBtn) {
     if (!C.options.bgm) {
@@ -411,18 +509,40 @@
     } else {
       var audio = new Audio(C.options.bgm);
       audio.loop = true;
+      audio.preload = "auto";
+      audio.volume = 0.6;
+      var wantOn = true;
+      var label = $(".music-btn__label", musicBtn);
+
+      var paint = function () {
+        musicBtn.classList.toggle("is-on", wantOn);
+        musicBtn.setAttribute("aria-pressed", String(wantOn));
+        musicBtn.setAttribute("aria-label", wantOn ? "배경음악 끄기" : "배경음악 켜기");
+        label.textContent = wantOn ? "ON" : "OFF";
+      };
+      var tryPlay = function () {
+        if (!wantOn || document.hidden) return;
+        var p = audio.play();
+        if (p && p.catch) p.catch(function () { /* 자동재생 차단 → 첫 터치 때 재생 */ });
+      };
+      var unlockEvents = ["pointerdown", "touchend", "click", "keydown"];
+      var unlock = function (e) {
+        if (e && musicBtn.contains(e.target)) return;    // 버튼 클릭은 아래 토글에서 처리
+        unlockEvents.forEach(function (n) { document.removeEventListener(n, unlock, true); });
+        tryPlay();
+      };
+      unlockEvents.forEach(function (n) { document.addEventListener(n, unlock, true); });
+
       musicBtn.addEventListener("click", function () {
-        if (audio.paused) {
-          audio.play().then(function () {
-            musicBtn.classList.add("is-playing");
-          }, function () {
-            showToast("브라우저가 음악 재생을 막았습니다");
-          });
-        } else {
-          audio.pause();
-          musicBtn.classList.remove("is-playing");
-        }
+        wantOn = !wantOn;
+        paint();
+        if (wantOn) tryPlay(); else audio.pause();
       });
+      document.addEventListener("visibilitychange", function () {
+        if (document.hidden) audio.pause(); else tryPlay();
+      });
+      paint();
+      tryPlay();
     }
   }
 

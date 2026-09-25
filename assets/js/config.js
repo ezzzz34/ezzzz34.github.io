@@ -119,14 +119,10 @@ window.INVITATION = {
    * ------------------------------------------------------------- */
   gallery: {
     title: "GALLERY",
-    images: [
-      "assets/img/gallery-01.jpg",
-      "assets/img/gallery-02.jpg",
-      "assets/img/gallery-03.jpg",
-      "assets/img/gallery-04.jpg",
-      "assets/img/gallery-05.jpg",
-      "assets/img/gallery-06.jpg",
-    ],
+    // 사진은 assets/img/gallery/ 에 원본(001.jpg)과 썸네일(001-thumb.jpg) 두 장씩 있습니다.
+    // 순서를 바꾸거나 빼려면 아래 번호 목록만 고치면 됩니다.
+    folder: "assets/img/gallery/",
+    images: ["001", "003", "015", "018", "020", "027", "034"],
   },
 
   /* ---------------------------------------------------------------
@@ -154,9 +150,9 @@ window.INVITATION = {
     showDday: true,       // D-day 카운터 표시
     showCalendar: true,   // 달력 표시
     shareButton: true,    // 링크 복사(공유) 버튼 표시
-    // 배경음악 파일 경로. 예) "assets/audio/bgm.mp3"
-    // "" 로 두면 우측 상단 음표 버튼이 표시되지 않습니다.
-    bgm: "",
+    // 배경음악 파일 경로. "" 로 두면 우측 상단 음악 버튼이 표시되지 않습니다.
+    // 접속하면 자동 재생을 시도하고, 브라우저가 막으면 첫 터치/클릭 때 바로 재생됩니다.
+    bgm: "assets/audio/bg.mp3",
     footerText: "Copyright 2026. 소규성 ♥ 김은주 All rights reserved.",
   },
 };

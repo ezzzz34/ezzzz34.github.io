@@ -12,7 +12,6 @@
   --color-envelope:  #ccd095;   /* 편지 봉투 색 (앞판) */
   --color-envelope-flap: #c5c98b; /* 봉투 덮개 바깥면 */
   --color-envelope-in:   #b8bc7e; /* 봉투 안쪽(뒷판·덮개 안쪽) */
-  --color-heart:     #f3a9b5;   /* 실링·하트 색 */
   --color-title:     #484944;   /* 커버 큰 제목 색 */
 
   /* 사이트 전체가 이 한 글꼴로 통일되어 있습니다.
@@ -91,21 +90,34 @@ a { color: inherit; text-decoration: none; }
 /* ========================= ① 커버 (편지 봉투) ========================= */
 .cover {
   position: relative;
-  padding: 46px 30px 56px;
+  padding: 70px 30px 56px;
   text-align: center;
 }
 
 /* 우측 상단 음표 버튼 */
 .music-btn {
   position: absolute;
-  top: 22px; right: 20px;
-  width: 34px; height: 34px;
-  display: inline-flex; align-items: center; justify-content: center;
-  padding: 0; border: 0; background: none;
-  color: #b6b6b4;
-  transition: color .2s;
+  top: 18px; right: 18px;
+  z-index: 5;
+  display: inline-flex; align-items: center; gap: 5px;
+  height: 30px;
+  padding: 0 12px 0 10px;
+  border: 1px solid var(--color-line);
+  border-radius: 999px;
+  background: #fff;
+  color: #a3a39f;
+  font-family: var(--font-latin);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .12em;
+  transition: color .2s, border-color .2s;
 }
-.music-btn.is-playing { color: var(--color-envelope); }
+.music-btn__label { min-width: 24px; text-align: left; }
+.music-btn__slash { opacity: 1; transition: opacity .2s; }
+.music-btn.is-on { color: #7f8448; border-color: #d9dbb5; }
+.music-btn.is-on .music-btn__slash { opacity: 0; }
+.music-btn.is-on svg { animation: note-bob 1.6s ease-in-out infinite; }
+@keyframes note-bob { 50% { transform: translateY(-2px) rotate(-6deg); } }
 
 /* 큰 제목 */
 .cover__title {
@@ -188,66 +200,35 @@ a { color: inherit; text-decoration: none; }
 }
 .envelope__flap-paper { fill: var(--color-envelope-in); }
 
-/* 하트 실링 (덮개 꼭짓점 위) */
-.envelope__seal {
-  position: absolute;
-  left: 50%; top: 61%;
-  width: 15%;
-  aspect-ratio: 1;
-  margin: -7.5% 0 0 -7.5%;
-  border-radius: 50%;
-  background: #fff;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, .12);
-  display: flex; align-items: center; justify-content: center;
-  opacity: 0;                  /* 열린 상태에서는 떨어져 나간 상태 */
-}
-.envelope__seal svg { width: 58%; fill: var(--color-heart); }
-
-/* 퍼지는 하트 */
-.envelope__hearts {
-  position: absolute;
-  z-index: 4;
-  left: 50%; bottom: 60%;
-  width: 0; height: 0;
+/* 사진 틀 + 눈 캔버스 */
+.envelope__frame { position: relative; }
+.snow {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
   pointer-events: none;
-}
-.envelope__hearts i {
-  position: absolute;
-  left: -12px; top: -12px;
-  width: 24px; height: 24px;
   opacity: 0;
-  background: var(--color-heart);
-  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21 4.3 13.7a4.8 4.8 0 0 1 6.8-6.8l.9.9.9-.9a4.8 4.8 0 0 1 6.8 6.8Z'/%3E%3C/svg%3E") center / contain no-repeat;
-          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21 4.3 13.7a4.8 4.8 0 0 1 6.8-6.8l.9.9.9-.9a4.8 4.8 0 0 1 6.8 6.8Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  transition: opacity 1.2s ease;
 }
-.envelope__hearts i:nth-child(1) { --x: -120px; --y: -70px;  --r: -24deg; --s: .9;  --d: 0s; }
-.envelope__hearts i:nth-child(2) { --x: 118px;  --y: -92px;  --r: 20deg;  --s: 1.1; --d: .08s; }
-.envelope__hearts i:nth-child(3) { --x: -70px;  --y: -150px; --r: -10deg; --s: .7;  --d: .16s; }
-.envelope__hearts i:nth-child(4) { --x: 80px;   --y: -160px; --r: 14deg;  --s: .8;  --d: .04s; }
-.envelope__hearts i:nth-child(5) { --x: -150px; --y: -130px; --r: -30deg; --s: .6;  --d: .2s; }
-.envelope__hearts i:nth-child(6) { --x: 150px;  --y: -40px;  --r: 30deg;  --s: .7;  --d: .12s; }
+.snow.is-on { opacity: 1; }
 
 /* ---------- 닫힌 상태 (접속 직후) ---------- */
 .envelope.is-closed .envelope__photo { transform: translateY(83%); }
 .envelope.is-closed .envelope__flap { z-index: 3; }
 .envelope.is-closed .envelope__flap svg { transform: rotateX(0deg); }
 .envelope.is-closed .envelope__flap-paper { fill: var(--color-envelope-flap); }
-.envelope.is-closed .envelope__seal { opacity: 1; }
 .envelope.is-closed ~ .cover__subtitle,
 .envelope.is-closed ~ .cover__more { opacity: 0; }
 
 /* ---------- 열리는 애니메이션 ----------
-   0.25s 봉투 콩콩 흔들림 + 실링 두근 → 1.0s 실링 톡 → 1.15s 덮개 열림
-   → 1.6s 사진 쏙 튀어나옴 → 1.9s 하트 퐁퐁 → 2.4s 아래 글자 등장 */
+   0.25s 봉투 콩콩 흔들림 → 0.95s 덮개 열림 → 1.4s 사진 쏙 튀어나옴
+   → 2.1s 아래 글자 등장 → 2.3s 사진 안에 눈 (main.js) */
 .envelope.is-opening { animation: env-wiggle .8s .25s cubic-bezier(.36,.07,.19,.97) both; }
-.envelope.is-opening .envelope__seal { animation: seal-pop 1.05s .25s ease-in both; }
-.envelope.is-opening .envelope__flap { animation: flap-layer .55s 1.15s linear both; }
-.envelope.is-opening .envelope__flap svg { animation: flap-open .55s 1.15s cubic-bezier(.45,.05,.55,.95) both; }
-.envelope.is-opening .envelope__flap-paper { animation: flap-color .55s 1.15s step-end both; }
-.envelope.is-opening .envelope__photo { animation: photo-pop 1s 1.6s cubic-bezier(.22,.9,.3,1) both; }
-.envelope.is-opening .envelope__hearts i { animation: heart-burst 1.5s calc(1.9s + var(--d)) ease-out both; }
+.envelope.is-opening .envelope__flap { animation: flap-layer .55s .95s linear both; }
+.envelope.is-opening .envelope__flap svg { animation: flap-open .55s .95s cubic-bezier(.45,.05,.55,.95) both; }
+.envelope.is-opening .envelope__flap-paper { animation: flap-color .55s .95s step-end both; }
+.envelope.is-opening .envelope__photo { animation: photo-pop 1s 1.4s cubic-bezier(.22,.9,.3,1) both; }
 .envelope.is-opening ~ .cover__subtitle,
-.envelope.is-opening ~ .cover__more { animation: fade-up .8s 2.4s ease-out both; }
+.envelope.is-opening ~ .cover__more { animation: fade-up .8s 2.1s ease-out both; }
 
 @keyframes env-wiggle {
   0%, 100% { transform: none; }
@@ -256,15 +237,6 @@ a { color: inherit; text-decoration: none; }
   44% { transform: translateY(-4px) rotate(-2deg); }
   60% { transform: translateY(0) rotate(1.2deg); }
   76% { transform: rotate(-.5deg); }
-}
-@keyframes seal-pop {
-  0%   { transform: scale(1); opacity: 1; }
-  20%  { transform: scale(1.12); }
-  32%  { transform: scale(1); }
-  48%  { transform: scale(1.12); }
-  60%  { transform: scale(1); }
-  80%  { transform: scale(1.25); opacity: 1; }
-  100% { transform: scale(.2) translateY(-40%); opacity: 0; }
 }
 @keyframes flap-open {
   from { transform: rotateX(0deg); }
@@ -284,12 +256,6 @@ a { color: inherit; text-decoration: none; }
   62%  { transform: translateY(-5%); }
   80%  { transform: translateY(1.2%); }
   100% { transform: translateY(0); }
-}
-@keyframes heart-burst {
-  0%   { opacity: 0; transform: translate(0, 0) scale(.2) rotate(0); }
-  15%  { opacity: 1; }
-  70%  { opacity: .9; }
-  100% { opacity: 0; transform: translate(var(--x), var(--y)) scale(var(--s)) rotate(var(--r)); }
 }
 @keyframes fade-up {
   from { opacity: 0; transform: translateY(10px); }
@@ -461,13 +427,15 @@ a { color: inherit; text-decoration: none; }
   color: var(--color-muted);
   margin: 0 0 20px;
 }
-/* 지도 */
+/* 지도 : 섹션 안쪽에 들어간 카드 형태 (지도 + 지도 앱 버튼) */
 .map {
-  margin: 28px -28px 0;          /* 섹션 좌우 여백을 넘어 화면 폭 가득 */
+  margin-top: 28px;
   aspect-ratio: 4 / 3;
   background: #f4f4f2;
-  border-top: 1px solid var(--color-line);
-  border-bottom: 1px solid var(--color-line);
+  border: 1px solid var(--color-line);
+  border-bottom: 0;
+  border-radius: 10px 10px 0 0;
+  overflow: hidden;
 }
 .map iframe { width: 100%; height: 100%; border: 0; display: block; }
 
@@ -475,12 +443,12 @@ a { color: inherit; text-decoration: none; }
 .map-apps {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  margin: 0 -28px;
-  border-bottom: 1px solid var(--color-line);
+  border: 1px solid var(--color-line);
+  border-radius: 0 0 10px 10px;
 }
 .map-app {
   display: flex; align-items: center; justify-content: center; gap: 6px;
-  padding: 14px 4px;
+  padding: 13px 4px;
   font-size: 13px;
   color: var(--color-text);
 }
@@ -572,25 +540,50 @@ a { color: inherit; text-decoration: none; }
   background: rgba(20, 18, 16, .94);
   display: flex; align-items: center; justify-content: center;
   z-index: 100;
+  animation: lb-in .25s ease-out;
 }
 .lightbox[hidden] { display: none; }
-.lightbox__img { max-width: 90vw; max-height: 80vh; object-fit: contain; }
+@keyframes lb-in { from { opacity: 0; } }
+/* 사진 + X 버튼을 묶는 틀 (X 가 사진 오른쪽 위에 붙도록) */
+.lightbox__stage { position: relative; line-height: 0; }
+.lightbox__img {
+  max-width: 84vw; max-height: 78vh;
+  width: auto; height: auto;
+  object-fit: contain;
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+.lightbox__img.is-loaded { opacity: 1; }
+@media (min-width: 600px) { .lightbox__img { max-width: 520px; } }
 .lightbox__close {
-  position: absolute; top: 16px; right: 20px;
-  background: none; border: 0; color: #fff;
-  font-size: 32px; line-height: 1;
+  position: absolute; top: 10px; right: 10px;
+  width: 34px; height: 34px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0; border: 0; border-radius: 50%;
+  background: rgba(0, 0, 0, .45);
+  color: #fff;
+}
+.lightbox__close svg,
+.lightbox__nav svg {
+  width: 18px; height: 18px;
+  fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;
 }
 .lightbox__nav {
-  position: absolute; top: 50%; transform: translateY(-50%);
-  background: none; border: 0; color: #fff;
-  font-size: 44px; line-height: 1; padding: 0 16px;
+  position: absolute; top: 50%;
+  width: 38px; height: 38px;
+  margin-top: -19px;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0; border: 0; border-radius: 50%;
+  background: rgba(255, 255, 255, .16);
+  color: #fff;
 }
-.lightbox__nav--prev { left: 0; }
-.lightbox__nav--next { right: 0; }
+.lightbox__nav svg { width: 20px; height: 20px; }
+.lightbox__nav--prev { left: 8px; }
+.lightbox__nav--next { right: 8px; }
 .lightbox__count {
   position: absolute; bottom: 28px;
   width: 100%; text-align: center;
-  color: #fff; font-size: 13px; margin: 0;
+  color: rgba(255, 255, 255, .8); font-size: 13px; letter-spacing: .1em; margin: 0;
 }
 
 /* ========================= ⑥ 연락처 ========================= */
