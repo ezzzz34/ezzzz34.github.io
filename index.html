@@ -45,11 +45,24 @@
         </span>
       </h1>
 
-      <!-- 봉투 : 사진(뒤) + 봉투 앞면 SVG(앞) 순서로 겹칩니다 -->
-      <div class="envelope">
-        <div class="envelope__photo">
-          <img data-bind-src="cover.image" alt="메인 사진" />
+      <!-- 봉투 : 겹치는 순서 (뒤 → 앞)
+             뒷판 → 사진 → 앞판 → 덮개(닫힌 상태)
+           접속하면 main.js 가 is-opening 을 붙여 [흔들림 → 덮개 열림 → 사진 튀어나옴] 순서로 재생합니다.
+           처음 상태(is-closed)는 사진이 봉투 속에 들어가 있고 덮개가 닫혀 있습니다. -->
+      <div class="envelope is-closed" data-slot="envelope">
+        <!-- 봉투 뒷판(안쪽 면) -->
+        <svg class="envelope__back" viewBox="0 0 688 418" aria-hidden="true" focusable="false">
+          <rect width="688" height="418" rx="10" />
+        </svg>
+
+        <!-- 사진 : 봉투 바닥선 아래로는 잘려서 보이지 않습니다 -->
+        <div class="envelope__pocket">
+          <div class="envelope__photo">
+            <img data-bind-src="cover.image" alt="메인 사진" />
+          </div>
         </div>
+
+        <!-- 봉투 앞판 (가운데가 V자로 파여 사진이 그 사이로 올라옵니다) -->
         <svg class="envelope__front" viewBox="0 0 688 418" aria-hidden="true" focusable="false">
           <defs>
             <clipPath id="envClip">
@@ -57,15 +70,29 @@
                        Q688,418 678,418 L10,418 Q0,418 0,408 Z" />
             </clipPath>
           </defs>
-          <!-- 봉투 앞면 (가운데가 V자로 파여 사진이 그 사이로 올라옵니다) -->
           <path class="envelope__paper"
                 d="M0,10 Q0,0 10,0 L344,202 L678,0 Q688,0 688,10 L688,408
                    Q688,418 678,418 L10,418 Q0,418 0,408 Z" />
-          <!-- 접힌 자국 (봉투 밖으로 삐져나가지 않도록 잘라냅니다) -->
           <g clip-path="url(#envClip)">
             <path class="envelope__fold" d="M344,121 L0,382 M344,121 L688,382" />
           </g>
         </svg>
+
+        <!-- 봉투 덮개 + 하트 실링 -->
+        <div class="envelope__flap">
+          <svg viewBox="0 0 688 262" aria-hidden="true" focusable="false">
+            <path class="envelope__flap-paper"
+                  d="M0,10 Q0,0 10,0 L678,0 Q688,0 688,10 L356,252 Q344,261 332,252 Z" />
+          </svg>
+          <span class="envelope__seal" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M12 20.3 4.9 13.6a4.4 4.4 0 0 1 6.2-6.3l.9.9.9-.9a4.4 4.4 0 0 1 6.2 6.3Z"/></svg>
+          </span>
+        </div>
+
+        <!-- 사진이 나올 때 퍼지는 작은 하트들 -->
+        <div class="envelope__hearts" aria-hidden="true">
+          <i></i><i></i><i></i><i></i><i></i><i></i>
+        </div>
       </div>
 
       <p class="cover__subtitle" data-bind="cover.subtitle"></p>
@@ -123,8 +150,14 @@
         <button class="btn" type="button" data-action="copy-address">주소 복사</button>
         <a class="btn" data-bind-href="tel:wedding.venue.tel">웨딩홀 전화</a>
       </div>
-      <!-- 지도는 다음 단계에서 이 자리에 삽입 -->
-      <div class="map-placeholder">지도는 이후 단계에서 추가 예정입니다</div>
+
+      <!-- 지도 (config 의 wedding.venue.mapQuery 로 검색한 위치) -->
+      <div class="map" data-slot="map"></div>
+      <!-- 지도 앱으로 열기 -->
+      <div class="map-apps" data-slot="map-apps"></div>
+
+      <!-- 오시는 길 (config 의 wedding.directions) -->
+      <div class="directions" data-slot="directions"></div>
     </section>
 
     <!-- ⑥ 연락처 -->

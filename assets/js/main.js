@@ -87,6 +87,33 @@
     node.setAttribute("href", scheme ? scheme + ":" + digits(v) : v);
   });
 
+  /* ---------- 1-1) 커버 봉투 열기 애니메이션 ----------
+   * 메인 사진이 다 불러와진 뒤(최대 2.5초 대기) 봉투를 엽니다.
+   * '동작 줄이기' 설정 사용자는 애니메이션 없이 바로 열린 상태로 보여줍니다. */
+  var envelope = $('[data-slot="envelope"]');
+  if (envelope) {
+    var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var opened = false;
+    var openEnvelope = function () {
+      if (opened) return;
+      opened = true;
+      envelope.classList.remove("is-closed");
+      if (!reduce) envelope.classList.add("is-opening");
+    };
+    if (reduce) {
+      openEnvelope();
+    } else {
+      var coverImg = $("img", envelope);
+      var go = function () { setTimeout(openEnvelope, 250); };
+      if (!coverImg || (coverImg.complete && coverImg.naturalWidth)) go();
+      else {
+        coverImg.addEventListener("load", go, { once: true });
+        coverImg.addEventListener("error", go, { once: true });
+      }
+      setTimeout(openEnvelope, 2500);
+    }
+  }
+
   /* ---------- 2) 예식 일시 ---------- */
   var WEEK = ["일", "월", "화", "수", "목", "금", "토"];
   var wd = new Date(C.wedding.date);
@@ -215,6 +242,88 @@
       if (e.key === "ArrowLeft") move(-1);
       if (e.key === "ArrowRight") move(1);
     });
+  }
+
+  /* ---------- 5-1) 지도 · 지도 앱 버튼 · 오시는 길 ---------- */
+  var venue = C.wedding.venue || {};
+  var mapSlot = $('[data-slot="map"]');
+  if (mapSlot && venue.mapQuery) {
+    var iframe = el("iframe");
+    iframe.title = venue.name + " 지도";
+    iframe.loading = "lazy";
+    iframe.referrerPolicy = "no-referrer-when-downgrade";
+    iframe.src = "https://maps.google.com/maps?hl=ko&z=16&output=embed&q=" +
+                 encodeURIComponent(venue.mapQuery);
+    mapSlot.appendChild(iframe);
+  } else if (mapSlot) {
+    mapSlot.remove();
+  }
+
+  var appsSlot = $('[data-slot="map-apps"]');
+  if (appsSlot) {
+    var q = encodeURIComponent(venue.searchName || venue.name);
+    [
+      { name: "네이버지도", cls: "naver", href: "https://map.naver.com/p/search/" + q },
+      { name: "카카오맵",   cls: "kakao", href: "https://map.kakao.com/link/search/" + q },
+      { name: "티맵",       cls: "tmap",  href: "tmap://search?name=" + q },
+    ].forEach(function (a) {
+      var link = el("a", "map-app map-app--" + a.cls);
+      link.href = a.href;
+      if (a.href.indexOf("http") === 0) { link.target = "_blank"; link.rel = "noopener"; }
+      link.appendChild(el("span", "map-app__dot"));
+      link.appendChild(document.createTextNode(a.name));
+      appsSlot.appendChild(link);
+    });
+  }
+
+  var ICONS = {
+    car: '<path d="M5 17h14M5 17v2.2M19 17v2.2M3.5 12.5 5.6 7.3A2 2 0 0 1 7.5 6h9a2 2 0 0 1 1.9 1.3l2.1 5.2M3.5 12.5h17v4.5h-17z" /><circle cx="7.5" cy="14.8" r=".9" /><circle cx="16.5" cy="14.8" r=".9" />',
+    bus: '<rect x="5" y="3.5" width="14" height="14.5" rx="2.5" /><path d="M5 11h14M8 18v2.3M16 18v2.3M9 6.5h6" /><circle cx="8.3" cy="14.5" r=".9" /><circle cx="15.7" cy="14.5" r=".9" />',
+    subway: '<rect x="6" y="3.5" width="12" height="13.5" rx="3" /><path d="M6 10.5h12M9 17l-2.5 3.5M15 17l2.5 3.5M8 20.5h8" /><circle cx="9" cy="13.8" r=".9" /><circle cx="15" cy="13.8" r=".9" />',
+  };
+  var dirSlot = $('[data-slot="directions"]');
+  var dirs = C.wedding.directions || [];
+  if (dirSlot && dirs.length) {
+    dirs.forEach(function (d) {
+      var item = el("div", "direction");
+      var head = el("div", "direction__head");
+      var icon = el("span", "direction__icon");
+      icon.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' + (ICONS[d.icon] || "") + "</svg>";
+      head.appendChild(icon);
+      head.appendChild(el("h3", "direction__title", d.title));
+      item.appendChild(head);
+
+      var list = el("ul", "direction__list");
+      var badgeRow = null;
+      (d.lines || []).forEach(function (line) {
+        if (typeof line === "string") {
+          badgeRow = null;
+          list.appendChild(el("li", null, line));
+          return;
+        }
+        // 배지 줄 : 연속된 배지(예: 1호선, 2호선)는 한 줄에 모읍니다
+        if (!badgeRow || line.items.length) {
+          var li = el("li", "direction__badges");
+          list.appendChild(li);
+          badgeRow = line.items.length ? null : li;
+          var target = li;
+        } else {
+          target = badgeRow;
+        }
+        var badge = el("span", "badge", line.label);
+        badge.style.background = line.color;
+        target.appendChild(badge);
+        line.items.forEach(function (n) {
+          var num = el("span", "bus-no", n);
+          num.style.color = line.color;
+          target.appendChild(num);
+        });
+      });
+      item.appendChild(list);
+      dirSlot.appendChild(item);
+    });
+  } else if (dirSlot) {
+    dirSlot.remove();
   }
 
   /* ---------- 6) 연락처 ---------- */

@@ -9,7 +9,10 @@
   --color-line:      #e3ddd4;   /* 구분선 */
   --color-point:     #b08d6a;   /* 포인트(강조) 색 */
   --color-point-bg:  #f1e9df;   /* 포인트 배경 */
-  --color-envelope:  #ccd095;   /* 편지 봉투 색 */
+  --color-envelope:  #ccd095;   /* 편지 봉투 색 (앞판) */
+  --color-envelope-flap: #c5c98b; /* 봉투 덮개 바깥면 */
+  --color-envelope-in:   #b8bc7e; /* 봉투 안쪽(뒷판·덮개 안쪽) */
+  --color-heart:     #f3a9b5;   /* 실링·하트 색 */
   --color-title:     #484944;   /* 커버 큰 제목 색 */
 
   /* 사이트 전체가 이 한 글꼴로 통일되어 있습니다.
@@ -118,15 +121,43 @@ a { color: inherit; text-decoration: none; }
 .cover__title span span { display: inline; }
 .cover__amp { margin: 0; }
 
-/* 봉투 + 사진 */
+/* 봉투 + 사진
+   겹침 순서: 뒷판(0) → 사진(1) → 앞판(2) → 덮개(3, 열리면 0 으로 내려가 사진 뒤로)
+   봉투 몸통 비율은 688 × 418 (SVG viewBox 와 동일) */
 .envelope {
   position: relative;
   width: 100%;
+  transform-origin: 50% 100%;
+}
+.envelope__back,
+.envelope__front,
+.envelope__flap {
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 100%;
+}
+.envelope__back  { z-index: 0; height: auto; fill: var(--color-envelope-in); }
+.envelope__front {
+  z-index: 2;
+  height: auto;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, .10));
+}
+.envelope__paper { fill: var(--color-envelope); }
+.envelope__fold {
+  fill: none;
+  stroke: rgba(0, 0, 0, .07);
+  stroke-width: 2;
+}
+
+/* 사진 주머니 : 봉투 바닥선 아래는 잘라냄 (위·옆은 그림자가 보이도록 여유) */
+.envelope__pocket {
+  position: relative;
+  z-index: 1;
   padding-bottom: 32.9%;      /* 사진 아래로 내려오는 봉투 높이 */
+  clip-path: inset(-80px -80px 4px -80px);  /* 바닥 4px 여유: 봉투 밑으로 사진 테두리가 비치지 않게 */
 }
 .envelope__photo {
   position: relative;
-  z-index: 1;
   width: 82.6%;
   margin: 0 auto;
   padding: 4.4% 3.9% 6.1%;    /* 사진을 감싸는 흰 여백 */
@@ -139,19 +170,134 @@ a { color: inherit; text-decoration: none; }
   object-fit: cover;
   background: var(--color-point-bg);
 }
-.envelope__front {
-  position: absolute;
-  left: 0; bottom: 0;
+
+/* 덮개 : 봉투 몸통과 같은 크기의 상자 안에서 윗변을 축으로 뒤집힘 */
+.envelope__flap {
+  z-index: 0;                  /* 열린 상태(기본) : 사진 뒤에서 위로 젖혀져 있음 */
+  aspect-ratio: 688 / 418;
+  perspective: 1200px;
+  pointer-events: none;
+}
+.envelope__flap svg {
+  display: block;
   width: 100%;
   height: auto;
-  z-index: 2;
-  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, .10));
+  transform-origin: 50% 0;
+  transform: rotateX(180deg);
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, .10));
 }
-.envelope__paper { fill: var(--color-envelope); }
-.envelope__fold {
-  fill: none;
-  stroke: rgba(0, 0, 0, .07);
-  stroke-width: 2;
+.envelope__flap-paper { fill: var(--color-envelope-in); }
+
+/* 하트 실링 (덮개 꼭짓점 위) */
+.envelope__seal {
+  position: absolute;
+  left: 50%; top: 61%;
+  width: 15%;
+  aspect-ratio: 1;
+  margin: -7.5% 0 0 -7.5%;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, .12);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0;                  /* 열린 상태에서는 떨어져 나간 상태 */
+}
+.envelope__seal svg { width: 58%; fill: var(--color-heart); }
+
+/* 퍼지는 하트 */
+.envelope__hearts {
+  position: absolute;
+  z-index: 4;
+  left: 50%; bottom: 60%;
+  width: 0; height: 0;
+  pointer-events: none;
+}
+.envelope__hearts i {
+  position: absolute;
+  left: -12px; top: -12px;
+  width: 24px; height: 24px;
+  opacity: 0;
+  background: var(--color-heart);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21 4.3 13.7a4.8 4.8 0 0 1 6.8-6.8l.9.9.9-.9a4.8 4.8 0 0 1 6.8 6.8Z'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21 4.3 13.7a4.8 4.8 0 0 1 6.8-6.8l.9.9.9-.9a4.8 4.8 0 0 1 6.8 6.8Z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.envelope__hearts i:nth-child(1) { --x: -120px; --y: -70px;  --r: -24deg; --s: .9;  --d: 0s; }
+.envelope__hearts i:nth-child(2) { --x: 118px;  --y: -92px;  --r: 20deg;  --s: 1.1; --d: .08s; }
+.envelope__hearts i:nth-child(3) { --x: -70px;  --y: -150px; --r: -10deg; --s: .7;  --d: .16s; }
+.envelope__hearts i:nth-child(4) { --x: 80px;   --y: -160px; --r: 14deg;  --s: .8;  --d: .04s; }
+.envelope__hearts i:nth-child(5) { --x: -150px; --y: -130px; --r: -30deg; --s: .6;  --d: .2s; }
+.envelope__hearts i:nth-child(6) { --x: 150px;  --y: -40px;  --r: 30deg;  --s: .7;  --d: .12s; }
+
+/* ---------- 닫힌 상태 (접속 직후) ---------- */
+.envelope.is-closed .envelope__photo { transform: translateY(83%); }
+.envelope.is-closed .envelope__flap { z-index: 3; }
+.envelope.is-closed .envelope__flap svg { transform: rotateX(0deg); }
+.envelope.is-closed .envelope__flap-paper { fill: var(--color-envelope-flap); }
+.envelope.is-closed .envelope__seal { opacity: 1; }
+.envelope.is-closed ~ .cover__subtitle,
+.envelope.is-closed ~ .cover__more { opacity: 0; }
+
+/* ---------- 열리는 애니메이션 ----------
+   0.25s 봉투 콩콩 흔들림 + 실링 두근 → 1.0s 실링 톡 → 1.15s 덮개 열림
+   → 1.6s 사진 쏙 튀어나옴 → 1.9s 하트 퐁퐁 → 2.4s 아래 글자 등장 */
+.envelope.is-opening { animation: env-wiggle .8s .25s cubic-bezier(.36,.07,.19,.97) both; }
+.envelope.is-opening .envelope__seal { animation: seal-pop 1.05s .25s ease-in both; }
+.envelope.is-opening .envelope__flap { animation: flap-layer .55s 1.15s linear both; }
+.envelope.is-opening .envelope__flap svg { animation: flap-open .55s 1.15s cubic-bezier(.45,.05,.55,.95) both; }
+.envelope.is-opening .envelope__flap-paper { animation: flap-color .55s 1.15s step-end both; }
+.envelope.is-opening .envelope__photo { animation: photo-pop 1s 1.6s cubic-bezier(.22,.9,.3,1) both; }
+.envelope.is-opening .envelope__hearts i { animation: heart-burst 1.5s calc(1.9s + var(--d)) ease-out both; }
+.envelope.is-opening ~ .cover__subtitle,
+.envelope.is-opening ~ .cover__more { animation: fade-up .8s 2.4s ease-out both; }
+
+@keyframes env-wiggle {
+  0%, 100% { transform: none; }
+  12% { transform: translateY(-6px) rotate(-3deg); }
+  28% { transform: translateY(0) rotate(2.5deg); }
+  44% { transform: translateY(-4px) rotate(-2deg); }
+  60% { transform: translateY(0) rotate(1.2deg); }
+  76% { transform: rotate(-.5deg); }
+}
+@keyframes seal-pop {
+  0%   { transform: scale(1); opacity: 1; }
+  20%  { transform: scale(1.12); }
+  32%  { transform: scale(1); }
+  48%  { transform: scale(1.12); }
+  60%  { transform: scale(1); }
+  80%  { transform: scale(1.25); opacity: 1; }
+  100% { transform: scale(.2) translateY(-40%); opacity: 0; }
+}
+@keyframes flap-open {
+  from { transform: rotateX(0deg); }
+  to   { transform: rotateX(180deg); }
+}
+/* 덮개가 절반 넘어가면 사진 뒤로 내려감 */
+@keyframes flap-layer {
+  0%, 49% { z-index: 3; }
+  50%, 100% { z-index: 0; }
+}
+@keyframes flap-color {
+  0%   { fill: var(--color-envelope-flap); }
+  50%, 100% { fill: var(--color-envelope-in); }
+}
+@keyframes photo-pop {
+  0%   { transform: translateY(83%); }
+  62%  { transform: translateY(-5%); }
+  80%  { transform: translateY(1.2%); }
+  100% { transform: translateY(0); }
+}
+@keyframes heart-burst {
+  0%   { opacity: 0; transform: translate(0, 0) scale(.2) rotate(0); }
+  15%  { opacity: 1; }
+  70%  { opacity: .9; }
+  100% { opacity: 0; transform: translate(var(--x), var(--y)) scale(var(--s)) rotate(var(--r)); }
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .envelope.is-opening,
+  .envelope.is-opening * { animation: none !important; }
 }
 
 /* 봉투 아래 안내 문구 (config 의 cover.subtitle 이 비어 있으면 숨겨집니다) */
@@ -315,14 +461,73 @@ a { color: inherit; text-decoration: none; }
   color: var(--color-muted);
   margin: 0 0 20px;
 }
-.map-placeholder {
-  margin-top: 24px;
-  padding: 40px 16px;
-  border: 1px dashed var(--color-line);
-  border-radius: var(--radius);
-  font-size: 13px;
-  color: var(--color-muted);
+/* 지도 */
+.map {
+  margin: 28px -28px 0;          /* 섹션 좌우 여백을 넘어 화면 폭 가득 */
+  aspect-ratio: 4 / 3;
+  background: #f4f4f2;
+  border-top: 1px solid var(--color-line);
+  border-bottom: 1px solid var(--color-line);
 }
+.map iframe { width: 100%; height: 100%; border: 0; display: block; }
+
+/* 지도 앱 버튼 */
+.map-apps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin: 0 -28px;
+  border-bottom: 1px solid var(--color-line);
+}
+.map-app {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 14px 4px;
+  font-size: 13px;
+  color: var(--color-text);
+}
+.map-app + .map-app { border-left: 1px solid var(--color-line); }
+.map-app__dot { width: 8px; height: 8px; border-radius: 50%; }
+.map-app--naver .map-app__dot { background: #03c75a; }
+.map-app--kakao .map-app__dot { background: #fee500; box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); }
+.map-app--tmap  .map-app__dot { background: #ef3b53; }
+
+/* 오시는 길 */
+.directions { margin-top: 36px; text-align: left; }
+.direction { padding: 22px 0; }
+.direction + .direction { border-top: 1px solid var(--color-line); }
+.direction__head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.direction__icon {
+  width: 32px; height: 32px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: #f1f2e2;
+  color: #7f8448;
+}
+.direction__icon svg {
+  width: 19px; height: 19px;
+  fill: none; stroke: currentColor; stroke-width: 1.5;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+.direction__icon circle { fill: currentColor; stroke: none; }
+.direction__title { margin: 0; font-size: 15px; font-weight: 500; letter-spacing: .02em; }
+.direction__list {
+  list-style: none;
+  margin: 0; padding: 0 0 0 42px;
+  font-size: 13.5px;
+  line-height: 1.8;
+  color: #5d5853;
+}
+.direction__list li + li { margin-top: 4px; }
+.direction__badges { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 8px; }
+.badge {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 20px;
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 1.7;
+  color: #fff;
+}
+.bus-no { font-weight: 500; }
 
 /* ========================= 버튼 ========================= */
 .btn-row {
