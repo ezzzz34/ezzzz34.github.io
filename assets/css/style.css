@@ -343,6 +343,8 @@ a { color: inherit; text-decoration: none; }
 }
 .parents__dot { margin: 0 4px; }
 .parents__rel { font-size: 13px; }
+/* 관계(아들/딸) : 2글자 폭 상자에 오른쪽 정렬 → '딸' 앞이 빈칸으로 채워져 두 줄의 위치가 같아짐 */
+.parents__relword { display: inline-block; min-width: 2em; text-align: right; }
 
 /* 고인 표시 국화 — 글줄 바깥(왼쪽)에 띄워 두어 열 정렬에 영향을 주지 않습니다 */
 .chrysanthemum {

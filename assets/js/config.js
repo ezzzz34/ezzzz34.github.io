@@ -37,7 +37,7 @@ window.INVITATION = {
   /* ---------------------------------------------------------------
    * 3. 신랑 · 신부 정보
    *    nameEn : 커버 큰 제목에 들어가는 영문 이름
-   *    relation: "장남", "차녀" 등
+   *    relation: "아들", "딸" 등 (글자 수가 달라도 두 줄 위치가 맞도록 앞을 빈칸으로 채웁니다)
    *    deceased: true 로 두면 성함 앞에 국화 표시가 붙습니다 (고인)
    * ------------------------------------------------------------- */
   couple: {
@@ -46,7 +46,7 @@ window.INVITATION = {
       name: "소규성",
       nameEn: "Kyoosung",
       phone: "",                 // 예) "010-1234-5678"
-      relation: "장남",
+      relation: "아들",
       father: { name: "소지섭", deceased: false },
       mother: { name: "오미숙", deceased: false },
     },
@@ -55,7 +55,7 @@ window.INVITATION = {
       name: "김은주",
       nameEn: "Eunju",
       phone: "",                 // 예) "010-1234-5678"
-      relation: "차녀",
+      relation: "딸",
       father: { name: "김영균", deceased: true },
       mother: { name: "이미옥", deceased: false },
     },

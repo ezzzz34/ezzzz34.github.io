@@ -87,6 +87,22 @@
     node.setAttribute("href", scheme ? scheme + ":" + digits(v) : v);
   });
 
+  /* ---------- 1-0) 새로고침 시 항상 맨 위에서 시작 ----------
+   * <head> 에서 scrollRestoration 을 manual 로 바꿨지만, iOS 사파리는 로드 직후에도
+   * 위치를 되돌리는 경우가 있어 load / pageshow 시점에 한 번 더 맨 위로 올립니다.
+   * (html 의 scroll-behavior: smooth 때문에 스르륵 올라가지 않도록 잠시 끕니다) */
+  function toTop() {
+    if (location.hash) return;                          // #주소로 들어온 경우는 그대로 둠
+    var root = document.documentElement;
+    var prev = root.style.scrollBehavior;
+    root.style.scrollBehavior = "auto";
+    window.scrollTo(0, 0);
+    root.style.scrollBehavior = prev;
+  }
+  toTop();
+  window.addEventListener("load", toTop);
+  window.addEventListener("pageshow", function (e) { if (!e.persisted) toTop(); });
+
   /* ---------- 1-1) 커버 봉투 열기 애니메이션 ----------
    * 메인 사진이 다 불러와진 뒤(최대 2.5초 대기) 봉투를 엽니다.
    * '동작 줄이기' 설정 사용자는 애니메이션 없이 바로 열린 상태로 보여줍니다. */
@@ -521,15 +537,21 @@
         label.textContent = wantOn ? "ON" : "OFF";
       };
       var tryPlay = function () {
-        if (!wantOn || document.hidden) return;
+        if (!wantOn || document.hidden || !audio.paused) return;
         var p = audio.play();
-        if (p && p.catch) p.catch(function () { /* 자동재생 차단 → 첫 터치 때 재생 */ });
+        if (p && p.then) p.then(stopUnlock, function () { /* 아직 허용 안 됨 → 다음 터치 때 재시도 */ });
       };
-      var unlockEvents = ["pointerdown", "touchend", "click", "keydown"];
+      /* 브라우저는 '재생 허용'으로 인정하는 이벤트가 정해져 있습니다.
+       * 터치 기기에서는 pointerdown 이 아니라 손을 뗄 때(pointerup / touchend)와 click 만 인정됩니다.
+       * → 재생이 실제로 성공할 때까지 매 터치마다 다시 시도하고, 성공하면 그때 리스너를 해제합니다.
+       *   (예전에는 첫 pointerdown 에서 실패하자마자 리스너를 전부 해제해 갤럭시 크롬에서 재생이 안 됐음) */
+      var unlockEvents = ["pointerup", "touchend", "click", "keydown", "mousedown"];
       var unlock = function (e) {
         if (e && musicBtn.contains(e.target)) return;    // 버튼 클릭은 아래 토글에서 처리
-        unlockEvents.forEach(function (n) { document.removeEventListener(n, unlock, true); });
         tryPlay();
+      };
+      var stopUnlock = function () {
+        unlockEvents.forEach(function (n) { document.removeEventListener(n, unlock, true); });
       };
       unlockEvents.forEach(function (n) { document.addEventListener(n, unlock, true); });
 

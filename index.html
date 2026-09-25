@@ -16,6 +16,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="assets/css/style.css" />
+
+  <!-- 새로고침하면 항상 맨 위(닫힌 봉투)부터 시작하도록, 브라우저의 스크롤 위치 복원을 끕니다.
+       본문이 그려지기 전에 실행되어야 해서 <head> 안에 둡니다. -->
+  <script>
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  </script>
 </head>
 
 <body>
@@ -116,10 +122,10 @@
 
       <!-- 혼주 / 신랑신부 : 2열 격자(혼주 | 이름) 로 두 줄의 열을 정확히 맞춥니다 -->
       <div class="parents">
-        <p class="parents__who"><span data-parent="couple.groom.father"></span><span class="parents__dot">·</span><span data-parent="couple.groom.mother"></span><span class="parents__rel">의 <span data-bind="couple.groom.relation"></span></span></p>
+        <p class="parents__who"><span data-parent="couple.groom.father"></span><span class="parents__dot">·</span><span data-parent="couple.groom.mother"></span><span class="parents__rel">의 <span class="parents__relword" data-bind="couple.groom.relation"></span></span></p>
         <p class="parents__name" data-bind="couple.groom.name"></p>
 
-        <p class="parents__who"><span data-parent="couple.bride.father"></span><span class="parents__dot">·</span><span data-parent="couple.bride.mother"></span><span class="parents__rel">의 <span data-bind="couple.bride.relation"></span></span></p>
+        <p class="parents__who"><span data-parent="couple.bride.father"></span><span class="parents__dot">·</span><span data-parent="couple.bride.mother"></span><span class="parents__rel">의 <span class="parents__relword" data-bind="couple.bride.relation"></span></span></p>
         <p class="parents__name" data-bind="couple.bride.name"></p>
       </div>
     </section>
