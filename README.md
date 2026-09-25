@@ -11,7 +11,7 @@ assets/
   js/config.js            ★ 내용(이름·날짜·장소·연락처·사진 목록) — 대부분의 수정은 여기서
   js/main.js              화면 렌더링 로직 (달력·D-day·갤러리·복사 등)
   img/main.jpg            커버(봉투 속) 사진 — 1050×1580
-  img/gallery/            갤러리 사진 — 001.jpg(긴 변 1600px) + 001-thumb.jpg(480px 정사각)
+  img/gallery/            갤러리 사진 — 01.jpg(1200×1500 이내) + 01-thumb.jpg(짧은 변 360px)
   audio/bg.mp3            배경음악 (128kbps)
 ```
 

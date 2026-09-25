@@ -274,27 +274,104 @@
     ddaySlot.remove();
   }
 
-  /* ---------- 5) 갤러리 + 라이트박스 ---------- */
-  var gallerySlot = $('[data-slot="gallery"]');
+  /* ---------- 5) 갤러리 (9장씩 넘기는 썸네일) + 라이트박스 ---------- */
   var G = C.gallery || {};
   var folder = G.folder || "";
+  var PER = G.perPage || 9;
   var images = (G.images || []).map(function (n) {
     return { full: folder + n + ".jpg", thumb: folder + n + "-thumb.jpg" };
   });
-  if (gallerySlot) {
-    images.forEach(function (im, idx) {
-      var btn = el("button");
-      btn.type = "button";
-      btn.setAttribute("aria-label", "사진 " + (idx + 1) + " 크게 보기");
-      var img = el("img");
-      img.alt = "웨딩 사진 " + (idx + 1);
-      img.loading = "lazy";
-      withFallback(img, String(idx + 1));
-      img.src = im.thumb;
-      btn.appendChild(img);
-      btn.addEventListener("click", function () { openLightbox(idx); });
-      gallerySlot.appendChild(btn);
+
+  /* 확대용 사진 미리 받아두기 — 한 번 받은 건 브라우저 캐시에 남아 팝업이 바로 뜹니다 */
+  var loaded = {};
+  function preloadFull(i) {
+    var im = images[(i + images.length) % images.length];
+    if (!im || loaded[im.full]) return;
+    var p = new Image();
+    p.decoding = "async";
+    p.onload = function () { loaded[im.full] = "done"; };
+    loaded[im.full] = "loading";
+    p.src = im.full;
+  }
+  function preloadPage(pg) {
+    for (var i = pg * PER; i < Math.min((pg + 1) * PER, images.length); i++) preloadFull(i);
+  }
+
+  var track = $('[data-slot="gallery"]');
+  var dotsSlot = $('[data-slot="gallery-dots"]');
+  var pages = Math.ceil(images.length / PER);
+  var page = 0;
+  var galleryWrap = track && track.closest(".gallery");
+  var prevArrow = galleryWrap && $(".gallery__arrow--prev", galleryWrap);
+  var nextArrow = galleryWrap && $(".gallery__arrow--next", galleryWrap);
+  var galleryVisible = false;
+
+  function goPage(pg) {
+    page = Math.max(0, Math.min(pages - 1, pg));
+    track.style.transform = "translateX(" + (-100 * page) + "%)";
+    prevArrow.disabled = page === 0;
+    nextArrow.disabled = page === pages - 1;
+    $$(".gallery__dot", dotsSlot).forEach(function (d, i) { d.classList.toggle("is-active", i === page); });
+    // 보고 있는 묶음과 다음 묶음의 썸네일을 즉시 받아둠
+    $$(".gallery__page", track).forEach(function (pgEl, i) {
+      if (Math.abs(i - page) <= 1) $$("img[data-src]", pgEl).forEach(function (img) {
+        img.src = img.getAttribute("data-src"); img.removeAttribute("data-src");
+      });
     });
+    if (galleryVisible) preloadPage(page);
+  }
+
+  if (track && images.length) {
+    for (var pg = 0; pg < pages; pg++) {
+      var pageEl = el("div", "gallery__page");
+      for (var k = pg * PER; k < Math.min((pg + 1) * PER, images.length); k++) {
+        (function (idx) {
+          var btn = el("button", "gallery__item");
+          btn.type = "button";
+          btn.setAttribute("aria-label", "사진 " + (idx + 1) + " 크게 보기");
+          var img = el("img");
+          img.alt = "웨딩 사진 " + (idx + 1);
+          img.decoding = "async";
+          withFallback(img, String(idx + 1));
+          img.setAttribute("data-src", images[idx].thumb);
+          btn.appendChild(img);
+          btn.addEventListener("click", function () { openLightbox(idx); });
+          pageEl.appendChild(btn);
+        })(k);
+      }
+      track.appendChild(pageEl);
+      if (dotsSlot && pages > 1) {
+        (function (target) {
+          var d = el("button", "gallery__dot");
+          d.type = "button";
+          d.setAttribute("aria-label", (target + 1) + "번째 사진 묶음");
+          d.addEventListener("click", function () { goPage(target); });
+          dotsSlot.appendChild(d);
+        })(pg);
+      }
+    }
+    if (pages < 2) { prevArrow.hidden = true; nextArrow.hidden = true; }
+    prevArrow.addEventListener("click", function () { goPage(page - 1); });
+    nextArrow.addEventListener("click", function () { goPage(page + 1); });
+
+    // 썸네일 묶음 좌우로 밀어서 넘기기
+    var vp = $(".gallery__viewport", galleryWrap), gx = null, gy = null;
+    vp.addEventListener("touchstart", function (e) { gx = e.touches[0].clientX; gy = e.touches[0].clientY; }, { passive: true });
+    vp.addEventListener("touchend", function (e) {
+      if (gx == null) return;
+      var dx = e.changedTouches[0].clientX - gx, dy = e.changedTouches[0].clientY - gy;
+      if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) goPage(page + (dx < 0 ? 1 : -1));
+      gx = gy = null;
+    });
+
+    // 갤러리가 화면에 가까워지면(400px 전) 지금 묶음의 확대 사진을 미리 받기 시작
+    if ("IntersectionObserver" in window) {
+      var gio = new IntersectionObserver(function (es) {
+        if (es[0].isIntersecting) { galleryVisible = true; preloadPage(page); gio.disconnect(); }
+      }, { rootMargin: "400px 0px" });
+      gio.observe(galleryWrap);
+    } else { galleryVisible = true; }
+    goPage(0);
   }
 
   var lb = $('[data-slot="lightbox"]');
@@ -302,10 +379,6 @@
   var lbCount = lb && $(".lightbox__count", lb);
   var cur = 0;
 
-  function preload(i) {
-    var n = images[(i + images.length) % images.length];
-    if (n) { var p = new Image(); p.src = n.full; }
-  }
   function openLightbox(i) {
     if (!lb || !images.length) return;
     cur = i;
@@ -317,19 +390,43 @@
     if (!lb) return;
     lb.hidden = true;
     document.body.style.overflow = "";
+    if (track) goPage(Math.floor(cur / PER));           // 팝업에서 넘겨 본 위치의 묶음으로 맞춤
   }
   function move(step) {
     cur = (cur + step + images.length) % images.length;
     render();
   }
+  /* 팝업 표시 : 이미 받아둔 썸네일을 즉시 보여주고(같은 비율), 확대 사진이 준비되면 바꿔 끼웁니다.
+     → 빈 화면에 X 만 떠 있는 순간이 없어집니다. */
+  function fit() {
+    var w = lbImg.naturalWidth, h = lbImg.naturalHeight;
+    if (!w || !h) return;
+    var s = Math.min(Math.min(window.innerWidth * 0.84, 520) / w, window.innerHeight * 0.78 / h);
+    lbImg.style.width = Math.round(w * s) + "px";
+    lbImg.style.height = Math.round(h * s) + "px";
+  }
+  if (lbImg) {
+    lbImg.addEventListener("load", fit);
+    window.addEventListener("resize", fit);
+  }
   function render() {
-    lbImg.classList.remove("is-loaded");
-    lbImg.onload = function () { lbImg.classList.add("is-loaded"); };
-    lbImg.src = images[cur].full;
+    var im = images[cur], want = cur;
     lbImg.alt = "웨딩 사진 " + (cur + 1);
-    if (lbImg.complete && lbImg.naturalWidth) lbImg.classList.add("is-loaded");
     lbCount.textContent = (cur + 1) + " / " + images.length;
-    preload(cur + 1); preload(cur - 1);                 // 양옆 사진 미리 불러오기
+    if (loaded[im.full] === "done") {
+      lbImg.src = im.full;
+      lbImg.classList.remove("is-preview");
+    } else {
+      lbImg.src = im.thumb;
+      lbImg.classList.add("is-preview");
+      var full = new Image();
+      full.onload = function () {
+        loaded[im.full] = "done";
+        if (cur === want) { lbImg.src = im.full; lbImg.classList.remove("is-preview"); }
+      };
+      full.src = im.full;
+    }
+    preloadFull(cur + 1); preloadFull(cur - 1);         // 양옆 사진 미리 받기
   }
   if (lb) {
     $(".lightbox__close", lb).addEventListener("click", closeLightbox);

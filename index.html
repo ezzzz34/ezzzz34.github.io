@@ -142,8 +142,19 @@
     <!-- ④ 갤러리 -->
     <section class="section reveal" id="gallery">
       <p class="section__eyebrow" data-bind="gallery.title"></p>
-      <h2 class="section__title">우리의 순간</h2>
-      <div class="gallery-grid" data-slot="gallery"></div>
+      <!-- 썸네일 9장(3×3)씩 한 묶음, 양옆 화살표나 손가락으로 넘김 -->
+      <div class="gallery">
+        <button class="gallery__arrow gallery__arrow--prev" type="button" aria-label="이전 사진 묶음">
+          <svg viewBox="0 0 12 64" preserveAspectRatio="none" aria-hidden="true"><path d="M10 2 L2 32 L10 62" /></svg>
+        </button>
+        <div class="gallery__viewport">
+          <div class="gallery__track" data-slot="gallery"></div>
+        </div>
+        <button class="gallery__arrow gallery__arrow--next" type="button" aria-label="다음 사진 묶음">
+          <svg viewBox="0 0 12 64" preserveAspectRatio="none" aria-hidden="true"><path d="M2 2 L10 32 L2 62" /></svg>
+        </button>
+      </div>
+      <div class="gallery__dots" data-slot="gallery-dots"></div>
     </section>
 
     <!-- ⑤ 장소 -->

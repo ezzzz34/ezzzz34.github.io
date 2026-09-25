@@ -519,22 +519,67 @@ a { color: inherit; text-decoration: none; }
 .btn:hover { background: var(--color-point-bg); border-color: var(--color-point); }
 
 /* ========================= ⑤ 갤러리 ========================= */
-.gallery-grid {
+/* 좌우 화살표 | 3×3 썸네일 창 | 좌우 화살표 */
+.gallery {
+  display: grid;
+  grid-template-columns: 22px 1fr 22px;
+  align-items: stretch;
+  gap: 10px;
+  max-width: 340px;              /* 썸네일 전체 크기를 섹션 폭보다 살짝 작게 */
+  margin: 0 auto;
+}
+.gallery__viewport { overflow: hidden; touch-action: pan-y; }
+.gallery__track {
+  display: flex;
+  transition: transform .45s cubic-bezier(.4, 0, .2, 1);
+}
+.gallery__page {
+  flex: 0 0 100%;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
   gap: 4px;
+  aspect-ratio: 1 / 1;           /* 마지막 묶음이 3장이어도 높이가 그대로 */
 }
-.gallery-grid button {
-  padding: 0; border: 0; background: none;
-  aspect-ratio: 1 / 1;
+.gallery__item {
+  padding: 0; border: 0;
+  background: var(--color-point-bg);
   overflow: hidden;
+  aspect-ratio: 1 / 1;
 }
-.gallery-grid img {
+.gallery__item img {
   width: 100%; height: 100%;
   object-fit: cover;
+  object-position: 50% 30%;      /* 세로 사진은 얼굴 쪽이 잘리지 않게 위쪽 기준 */
   transition: transform .4s ease;
 }
-.gallery-grid button:hover img { transform: scale(1.06); }
+.gallery__item:hover img { transform: scale(1.06); }
+
+/* 위아래로 긴 화살표 */
+.gallery__arrow {
+  display: flex; align-items: center; justify-content: center;
+  padding: 0; border: 0; background: none;
+  color: #9a9a90;
+  transition: color .2s, opacity .2s;
+}
+.gallery__arrow svg {
+  width: 12px; height: 38%;
+  fill: none; stroke: currentColor; stroke-width: 1.4;
+  stroke-linecap: round; stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+.gallery__arrow svg path { vector-effect: non-scaling-stroke; }
+.gallery__arrow:not(:disabled):hover { color: var(--color-text); }
+.gallery__arrow:disabled { opacity: .22; cursor: default; }
+
+/* 묶음 위치 점 */
+.gallery__dots { display: flex; justify-content: center; gap: 7px; margin-top: 18px; }
+.gallery__dot {
+  width: 6px; height: 6px; padding: 0; border: 0; border-radius: 50%;
+  background: #d9d6d0;
+  transition: background .2s, transform .2s;
+}
+.gallery__dot.is-active { background: #7f8448; transform: scale(1.2); }
 
 /* 라이트박스 */
 .lightbox {
@@ -548,15 +593,15 @@ a { color: inherit; text-decoration: none; }
 @keyframes lb-in { from { opacity: 0; } }
 /* 사진 + X 버튼을 묶는 틀 (X 가 사진 오른쪽 위에 붙도록) */
 .lightbox__stage { position: relative; line-height: 0; }
+/* 크기는 main.js 가 사진 비율로 계산해 지정 (썸네일 → 확대 사진으로 바뀌어도 크기가 그대로) */
 .lightbox__img {
+  display: block;
   max-width: 84vw; max-height: 78vh;
-  width: auto; height: auto;
   object-fit: contain;
-  opacity: 0;
-  transition: opacity .25s ease;
+  background: #2a2724;
+  transition: filter .3s ease;
 }
-.lightbox__img.is-loaded { opacity: 1; }
-@media (min-width: 600px) { .lightbox__img { max-width: 520px; } }
+.lightbox__img.is-preview { filter: blur(1.5px); }   /* 썸네일로 먼저 보여주는 동안 */
 .lightbox__close {
   position: absolute; top: 10px; right: 10px;
   width: 34px; height: 34px;
