@@ -303,6 +303,9 @@ a { color: inherit; text-decoration: none; }
   35%           { transform: translateY(5px); }
 }
 
+/* 잠금 상태 : 커버 아래 내용을 아예 그리지 않아 드래그해도 내려가지 않음 */
+.paper.is-locked > :not(.cover) { display: none; }
+
 @media (max-width: 380px) {
   .cover__title { font-size: 29px; }
   .cover__more  { font-size: 19px; }

@@ -661,6 +661,28 @@
     }
   }
 
+  /* ---------- 8-1) View Details 를 눌러야 아래 내용이 열림 ----------
+   * 처음에는 커버만 있어서 드래그해도 더 내려가지 않습니다.
+   * View Details '탭'은 브라우저가 소리 재생을 허용하는 동작이라, 이 순간 배경음악도 함께 시작됩니다
+   * (탭은 문서 전체의 재생 대기 리스너가 받아 tryPlay 를 호출). 드래그/스크롤은 허용 동작이 아니어서
+   * 이전에는 음악이 시작되지 않는 경우가 있었습니다.
+   * #location 처럼 주소에 위치가 붙어 들어온 경우는 바로 열어 둡니다. */
+  var paper = $(".paper");
+  var unlockBtn = $('[data-action="unlock"]');
+  if (paper && paper.classList.contains("is-locked")) {
+    if (location.hash && location.hash !== "#cover") paper.classList.remove("is-locked");
+    if (unlockBtn) {
+      unlockBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        paper.classList.remove("is-locked");
+        var target = $(unlockBtn.getAttribute("href"));
+        requestAnimationFrame(function () {
+          if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      });
+    }
+  }
+
   /* ---------- 9) 스크롤 등장 애니메이션 ---------- */
   var targets = $$(".reveal");
   if ("IntersectionObserver" in window) {

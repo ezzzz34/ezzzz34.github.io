@@ -31,7 +31,8 @@
        페이지는 config.js 의 내용으로 자동으로 채워집니다.
        구조(순서·섹션 추가/삭제)를 바꾸고 싶을 때만 이 파일을 수정하세요.
        ===================================================================== -->
-  <main class="paper">
+  <!-- is-locked : 처음에는 커버만 보이고, View Details 를 눌러야 아래 내용이 열립니다 (main.js) -->
+  <main class="paper is-locked">
 
     <!-- ① 커버 : 편지 봉투에서 사진이 나오는 화면 -->
     <section class="cover" id="cover">
@@ -103,7 +104,7 @@
 
       <p class="cover__subtitle" data-bind="cover.subtitle"></p>
 
-      <a class="cover__more" href="#greeting">
+      <a class="cover__more" href="#greeting" data-action="unlock">
         <span data-bind="cover.moreLabel"></span>
         <svg viewBox="0 0 24 14" width="30" height="18" aria-hidden="true">
           <path d="M2 2 L12 11 L22 2" fill="none" stroke="currentColor" stroke-width="2.4"
