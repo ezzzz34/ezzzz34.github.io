@@ -44,11 +44,24 @@ img { display: block; max-width: 100%; }
 button { font: inherit; cursor: pointer; }
 a { color: inherit; text-decoration: none; }
 
-/* 청첩장 종이 */
+/* 페이지 전체 뒤에서 내리는 눈 (main.js 가 그림) */
+.snow {
+  position: fixed; inset: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+}
+.snow.is-on { opacity: 1; }
+
+/* 청첩장 종이 : 배경을 투명하게 두어 뒤의 눈이 비치도록 (흰 바탕은 body 가 담당) */
 .paper {
+  position: relative;
+  z-index: 1;
   max-width: var(--paper-width);
   margin: 0 auto;
-  background: var(--color-paper);
+  background: transparent;
   min-height: 100vh;
   box-shadow: 0 0 40px rgba(0, 0, 0, .06);
   overflow: hidden;
@@ -60,11 +73,13 @@ a { color: inherit; text-decoration: none; }
   text-align: center;
   border-top: 1px solid var(--color-line);
 }
+/* 섹션 영문 제목 (WEDDING DAY, GALLERY …) — 커버의 '2026.12.13 SUN' 과 같은 글씨체 */
 .section__eyebrow {
-  font-family: var(--font-latin);
-  font-size: 13px;
-  letter-spacing: .28em;
-  color: var(--color-point);
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 300;
+  letter-spacing: .02em;
+  color: var(--color-title);
   margin: 0 0 14px;
   text-transform: uppercase;
 }
@@ -200,16 +215,8 @@ a { color: inherit; text-decoration: none; }
 }
 .envelope__flap-paper { fill: var(--color-envelope-in); }
 
-/* 사진 틀 + 눈 캔버스 */
+/* 사진 틀 */
 .envelope__frame { position: relative; }
-.snow {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 1.2s ease;
-}
-.snow.is-on { opacity: 1; }
 
 /* ---------- 닫힌 상태 (접속 직후) ---------- */
 .envelope.is-closed .envelope__photo { transform: translateY(83%); }
@@ -522,10 +529,10 @@ a { color: inherit; text-decoration: none; }
 /* 좌우 화살표 | 3×3 썸네일 창 | 좌우 화살표 */
 .gallery {
   display: grid;
-  grid-template-columns: 22px 1fr 22px;
+  grid-template-columns: 16px 1fr 16px;
   align-items: stretch;
-  gap: 10px;
-  max-width: 340px;              /* 썸네일 전체 크기를 섹션 폭보다 살짝 작게 */
+  gap: 8px;
+  max-width: 372px;              /* 썸네일 전체 크기 */
   margin: 0 auto;
 }
 .gallery__viewport { overflow: hidden; touch-action: pan-y; }
@@ -563,7 +570,7 @@ a { color: inherit; text-decoration: none; }
   transition: color .2s, opacity .2s;
 }
 .gallery__arrow svg {
-  width: 12px; height: 19%;
+  width: 10px; height: 6.5%;
   fill: none; stroke: currentColor; stroke-width: 1.4;
   stroke-linecap: round; stroke-linejoin: round;
   vector-effect: non-scaling-stroke;

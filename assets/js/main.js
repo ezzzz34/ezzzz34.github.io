@@ -132,32 +132,38 @@
     }
   }
 
-  /* ---------- 1-2) 커버 사진 안에서만 내리는 눈 ----------
-   * 사진 틀 크기의 캔버스에 눈송이를 그립니다. 화면 밖에 있으면 멈춰서 배터리를 아낍니다. */
+  /* ---------- 1-2) 페이지 전체 뒤에서 내리는 눈 ----------
+   * 화면 크기의 고정 캔버스(청첩장 내용 뒤)에 눈송이를 그립니다.
+   * 흰 바탕에서도 보이도록 옅은 회청색이고, 크기가 클수록 가깝게(진하고 빠르게) 보입니다.
+   * 다른 앱으로 나가 있으면 멈춰서 배터리를 아낍니다. */
   function startSnow() {
     var canvas = $('[data-slot="snow"]');
     if (!canvas || !canvas.getContext || startSnow.started) return;
     startSnow.started = true;
     var ctx = canvas.getContext("2d");
     var dpr = Math.min(window.devicePixelRatio || 1, 2);
-    var W = 0, H = 0, flakes = [], running = false, visible = true, last = 0;
+    var W = 0, H = 0, flakes = [], running = false, last = 0;
 
     function resize() {
-      W = canvas.clientWidth; H = canvas.clientHeight;
+      W = window.innerWidth; H = window.innerHeight;
       canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      var want = Math.min(90, Math.round(W * H / 7500));  // 폰 약 45개, PC 최대 90개
+      while (flakes.length < want) flakes.push(flake(true));
+      flakes.length = want;
     }
     function flake(anywhere) {
-      var r = Math.random() * 1.9 + 0.7;                 // 반지름 0.7 ~ 2.6px
+      var depth = Math.random();                          // 0 = 멀리, 1 = 가까이
+      var r = 1.2 + depth * 2.6;                          // 반지름 1.2 ~ 3.8px
       return {
         x: Math.random() * W,
         y: anywhere ? Math.random() * H : -r * 2,
         r: r,
-        vy: 12 + r * 9 + Math.random() * 8,              // 초당 낙하 px (큰 눈이 더 빨리)
-        amp: 6 + Math.random() * 14,                     // 좌우 흔들림 폭
-        freq: 0.4 + Math.random() * 0.8,
+        vy: 14 + depth * 30 + Math.random() * 6,         // 초당 낙하 px
+        amp: 8 + Math.random() * 18,
+        freq: 0.3 + Math.random() * 0.6,
         phase: Math.random() * Math.PI * 2,
-        a: 0.55 + Math.random() * 0.4,
+        a: 0.28 + depth * 0.42,
       };
     }
     function frame(t) {
@@ -170,34 +176,24 @@
         f.y += f.vy * dt;
         f.phase += f.freq * dt;
         if (f.y - f.r > H) { flakes[i] = flake(false); continue; }
-        var x = f.x + Math.sin(f.phase) * f.amp;
         ctx.beginPath();
-        ctx.arc(x, f.y, f.r, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(255,255,255," + f.a + ")";
-        ctx.shadowColor = "rgba(255,255,255,.8)";
-        ctx.shadowBlur = f.r * 2;
+        ctx.arc(f.x + Math.sin(f.phase) * f.amp, f.y, f.r, 0, Math.PI * 2);
+        ctx.fillStyle = "rgba(178,190,206," + f.a + ")";
         ctx.fill();
       }
       requestAnimationFrame(frame);
     }
     function play() {
-      if (running || !visible || document.hidden) return;
+      if (running || document.hidden) return;
       running = true; last = 0; requestAnimationFrame(frame);
     }
-    function stop() { running = false; }
 
     resize();
-    var count = Math.round(W * H / 2600);               // 사진 크기에 비례 (모바일 약 50개)
-    for (var i = 0; i < count; i++) flakes.push(flake(true));
     canvas.classList.add("is-on");
     window.addEventListener("resize", resize);
-    document.addEventListener("visibilitychange", function () { document.hidden ? stop() : play(); });
-    if ("IntersectionObserver" in window) {
-      new IntersectionObserver(function (es) {
-        visible = es[0].isIntersecting;
-        visible ? play() : stop();
-      }).observe(canvas);
-    }
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) running = false; else play();
+    });
     play();
   }
 

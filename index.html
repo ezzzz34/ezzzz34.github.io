@@ -25,6 +25,8 @@
 </head>
 
 <body>
+  <!-- 페이지 전체 뒤에서 내리는 눈 (청첩장 내용보다 뒤) -->
+  <canvas class="snow" data-slot="snow" aria-hidden="true"></canvas>
   <!-- =====================================================================
        페이지는 config.js 의 내용으로 자동으로 채워집니다.
        구조(순서·섹션 추가/삭제)를 바꾸고 싶을 때만 이 파일을 수정하세요.
@@ -69,8 +71,6 @@
           <div class="envelope__photo">
             <div class="envelope__frame">
               <img data-bind-src="cover.image" alt="메인 사진" />
-              <!-- 사진 안에서만 내리는 눈 -->
-              <canvas class="snow" data-slot="snow" aria-hidden="true"></canvas>
             </div>
           </div>
         </div>
