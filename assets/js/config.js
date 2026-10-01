@@ -124,8 +124,8 @@ window.INVITATION = {
         label: "신랑측",
         items: [
           { role: "신랑",    bank: "기업은행", number: "050-141901-02-012", holder: "소규성" },
-          { role: "어머님",  bank: "기업은행", number: "229-064394-01-018", holder: "오미숙" },
           { role: "아버님",  bank: "기업은행", number: "010-4336-9668",     holder: "소지섭" },
+          { role: "어머님",  bank: "기업은행", number: "229-064394-01-018", holder: "오미숙" },
         ],
       },
       {
