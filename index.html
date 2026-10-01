@@ -15,6 +15,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet" />
 
+  <!-- 하단 안내 제목용 명조체: 해당 문구의 글자만 잘라 받음 (문구를 바꾸면 text= 도 같이 수정) -->
+  <link href="https://fonts.googleapis.com/css2?family=Gowun+Batang&display=swap&text=%20%2C%EA%BB%98%EB%8A%94%EB%93%A0%EB%93%A4%EB%AA%A8%EB%B6%84%EC%8B%9C%EC%8B%9D%EC%97%90%EC%98%88%EC%99%80%EC%A3%BC" rel="stylesheet" />
   <link rel="stylesheet" href="assets/css/style.css" />
 
   <!-- 새로고침하면 항상 맨 위(닫힌 봉투)부터 시작하도록, 브라우저의 스크롤 위치 복원을 끕니다.
@@ -197,6 +199,7 @@
     <!-- ⑦ 푸터 -->
     <footer class="footer reveal">
       <!-- 안내 문구 -->
+      <p class="notice__title" data-bind="options.noticeTitle"></p>
       <p class="notice" data-bind="options.notice"></p>
       <div class="btn-row" data-slot="share"></div>
       <p class="footer__text" data-bind="options.footerText"></p>
