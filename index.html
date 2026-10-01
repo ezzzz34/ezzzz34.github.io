@@ -178,6 +178,14 @@
       <div class="directions" data-slot="directions"></div>
     </section>
 
+    <!-- ⑤-1 마음 전하실 곳 (계좌번호) -->
+    <section class="section reveal" id="account">
+      <p class="section__eyebrow">ACCOUNT</p>
+      <h2 class="section__title" data-bind="accounts.title"></h2>
+      <p class="account__desc" data-bind="accounts.description"></p>
+      <div class="account__btns" data-slot="account-btns"></div>
+    </section>
+
     <!-- ⑥ 연락처 -->
     <section class="section reveal" id="contact">
       <p class="section__eyebrow">CONTACT</p>
@@ -188,10 +196,26 @@
 
     <!-- ⑦ 푸터 -->
     <footer class="footer reveal">
+      <!-- 안내 문구 -->
+      <p class="notice" data-bind="options.notice"></p>
       <div class="btn-row" data-slot="share"></div>
       <p class="footer__text" data-bind="options.footerText"></p>
     </footer>
   </main>
+
+  <!-- 계좌번호 팝업 -->
+  <div class="sheet" data-slot="account-sheet" hidden>
+    <div class="sheet__panel" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+      <div class="sheet__head">
+        <h3 class="sheet__title" id="sheetTitle"></h3>
+        <button class="sheet__close" type="button" aria-label="닫기">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" /></svg>
+        </button>
+      </div>
+      <p class="sheet__hint">계좌번호를 누르면 복사됩니다</p>
+      <ul class="sheet__list"></ul>
+    </div>
+  </div>
 
   <!-- 갤러리 라이트박스 -->
   <div class="lightbox" data-slot="lightbox" hidden>

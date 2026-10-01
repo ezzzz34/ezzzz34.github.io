@@ -666,6 +666,70 @@
     shareSlot.appendChild(b);
   }
 
+  /* ---------- 7-1) 마음 전하실 곳 : 신랑측/신부측 버튼 → 계좌 팝업, 계좌번호 탭 → 복사 ---------- */
+  var A = C.accounts;
+  var accBtns = $('[data-slot="account-btns"]');
+  var sheet = $('[data-slot="account-sheet"]');
+  if (A && A.groups && accBtns && sheet) {
+    var sheetTitle = $(".sheet__title", sheet);
+    var sheetList = $(".sheet__list", sheet);
+    var COPY_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>';
+    var lastFocus = null;
+
+    var openSheet = function (g) {
+      sheetTitle.textContent = g.label + " 계좌번호";
+      sheetList.innerHTML = "";
+      g.items.forEach(function (it) {
+        var li = el("li", "sheet__item");
+        var who = el("div", "sheet__who", it.role);
+        who.appendChild(el("b", null, it.holder));
+        li.appendChild(who);
+        var btn = el("button", "sheet__copy");
+        btn.type = "button";
+        btn.setAttribute("aria-label", it.bank + " " + it.number + " 예금주 " + it.holder + " 계좌번호 복사");
+        var txt = el("span");
+        txt.appendChild(el("span", "sheet__bank", it.bank));
+        txt.appendChild(el("span", "sheet__num", it.number));
+        btn.appendChild(txt);
+        var ic = el("span", "sheet__copy-icon");
+        ic.innerHTML = COPY_ICON + "복사";
+        btn.appendChild(ic);
+        btn.addEventListener("click", function () {
+          // 숫자만 복사 → 은행 앱 계좌번호 칸에 그대로 붙여넣기 가능
+          copy(digits(it.number).replace(/\+/g, ""), it.bank + " " + it.number + " 복사되었습니다");
+        });
+        li.appendChild(btn);
+        sheetList.appendChild(li);
+      });
+      lastFocus = document.activeElement;
+      sheet.hidden = false;
+      document.body.style.overflow = "hidden";
+      $(".sheet__close", sheet).focus();
+    };
+    var closeSheet = function () {
+      sheet.hidden = true;
+      document.body.style.overflow = "";
+      if (lastFocus && lastFocus.focus) lastFocus.focus();
+    };
+
+    A.groups.forEach(function (g) {
+      var b = el("button", "account__btn");
+      b.type = "button";
+      b.appendChild(el("span", null, g.label + " 계좌번호"));
+      var chev = el("span");
+      chev.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>';
+      b.appendChild(chev);
+      b.addEventListener("click", function () { openSheet(g); });
+      accBtns.appendChild(b);
+    });
+    $(".sheet__close", sheet).addEventListener("click", closeSheet);
+    sheet.addEventListener("click", function (e) { if (e.target === sheet) closeSheet(); });
+    document.addEventListener("keydown", function (e) { if (!sheet.hidden && e.key === "Escape") closeSheet(); });
+  } else if (accBtns) {
+    var accSection = accBtns.closest(".section");
+    if (accSection) accSection.hidden = true;
+  }
+
   /* ---------- 8) 배경음악 ----------
    * 기본은 '켜짐'. 브라우저는 소리 있는 자동재생을 막기 때문에
    * 접속 즉시 재생을 시도하고, 막히면 사용자의 첫 터치/클릭 때 재생합니다.
